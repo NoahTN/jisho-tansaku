@@ -1,24 +1,30 @@
 {
   "manifest_version": 2,
-
-  "name": "Jisho Tansaku",
-  "description": "This extension is a starting point to create a real Chrome extension",
-  "version": "0.0.1",
-
-  "browser_action": {
-    "default_popup": "index.html",
-    "default_title": "Open the popup"
-  },
-  "icons": {
-    "16": "logo-small.png",
-    "48": "logo-small.png",
-    "128": "logo-small.png"
-  },
+  "name": "Extension Name",
+  "version": "0.1",
+  "description": "Some Description",
   "permissions": [
-    "contextMenus"
   ],
   "background": {
-    "persistent": false,
-    "scripts": ["app/background.js"]
+    "scripts": ["static/js/background.js"]
+  },
+  "content_scripts": [{
+    "js": [ "static/js/content.js" ],
+    "matches": [
+      "http://*.example.com/*", "https://*.example.com/*"
+    ]
+  }],
+  "icons": {
+    "192": "logo192.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "192": "logo192.png"
+    },
+    "default_title": "Popup",
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html"
   }
 }
