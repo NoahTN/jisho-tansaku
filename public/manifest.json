@@ -4,15 +4,16 @@
   "version": "0.1",
   "description": "Some Description",
   "permissions": [
+    "contextMenus",
+    "https://jisho.org/*"
   ],
   "background": {
+    "persistent": false,
     "scripts": ["static/js/background.js"]
   },
   "content_scripts": [{
     "js": [ "static/js/content.js" ],
-    "matches": [
-      "http://*.example.com/*", "https://*.example.com/*"
-    ]
+    "matches": ["<all_urls>"]
   }],
   "icons": {
     "192": "logo192.png"
