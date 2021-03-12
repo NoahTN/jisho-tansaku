@@ -1,8 +1,8 @@
-import { searchAndLoad } from './components/jisho-iframe';
+import { searchAndDisplay } from './utils/jisho-iframe';
 
 chrome.runtime.onMessage.addListener(
    (request, sender, sendResponse) => {
       console.log(request);
-      searchAndLoad(request);
+      searchAndDisplay(request);
    }
 );
