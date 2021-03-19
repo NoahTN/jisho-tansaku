@@ -1,8 +1,15 @@
-import { searchAndDisplay } from './utils/jisho-iframe';
+import * as JIFrame from './utils/jisho-iframe';
+
+JIFrame.insert();
 
 chrome.runtime.onMessage.addListener(
    (request, sender, sendResponse) => {
-      console.log(request);
-      searchAndDisplay(request);
+      JIFrame.display(request);
    }
 );
+
+document.addEventListener('click', function(e) {
+   if (JIFrame.displaying && !document.getElementById('jiframe').contains(e.target)){
+      JIFrame.hide()
+   }
+});
