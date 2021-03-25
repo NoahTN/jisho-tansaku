@@ -4,7 +4,15 @@ JIFrame.insert();
 
 chrome.runtime.onMessage.addListener(
    (request, sender, sendResponse) => {
-      JIFrame.display(request);
+      if(request.type == "search") {
+         JIFrame.display(request);
+      }
+      else if(request.type == "resize-w") {
+
+      }
+      else {
+
+      }
    }
 );
 
