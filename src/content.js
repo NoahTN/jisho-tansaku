@@ -1,17 +1,21 @@
 import * as JIFrame from './utils/jisho-iframe';
 
-JIFrame.insert();
+chrome.storage.sync.get(["width", "height"], function(data) {
+   let width = parseInt(data.width)+"px";
+   let height = parseInt(data.height)+"px";
+   JIFrame.insert(width, height);
+ });
 
 chrome.runtime.onMessage.addListener(
    (request, sender, sendResponse) => {
       if(request.type == "search") {
-         JIFrame.display(request);
+         JIFrame.display(request.data);
       }
-      else if(request.type == "resize-w") {
-
+      else if(request.type == "resz-w") {
+         JIFrame.resizeWidth(request.data)
       }
       else {
-
+         JIFrame.resizeHeight(request.data)
       }
    }
 );

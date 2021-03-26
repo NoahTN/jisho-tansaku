@@ -1,7 +1,7 @@
 export var jiframe;
 export var displaying = false;
 
-export function insert() {
+export function insert(width, height) {
    jiframe = document.createElement("iframe");
    jiframe.id = "jiframe";
    jiframe.frameborder = 0;
@@ -12,8 +12,8 @@ export function insert() {
       left: 50%;
       margin-left: -325px;
       z-index: 99999;
-      width: 650px;
-      height: 500px;
+      width: ${width};
+      height: ${height};
       box-shadow: 0px 0px 5px;
       border-radius: 5px;
    `);
@@ -36,3 +36,10 @@ export function hide() {
    displaying = false;
 }
 
+export function resizeWidth(width) {
+   jiframe.style.width = parseInt(width)+"px";
+}
+
+export function resizeHeight(height) {
+   jiframe.style.height = parseInt(height)+"px";
+}

@@ -5,7 +5,8 @@
   "description": "Some Description",
   "permissions": [
     "contextMenus",
-    "https://jisho.org/*"
+    "https://jisho.org/*",
+    "storage"
   ],
   "background": {
     "persistent": false,
