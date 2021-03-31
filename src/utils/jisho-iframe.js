@@ -8,9 +8,10 @@ export function insert(width, height) {
    jiframe.setAttribute("style", `
       position: absolute;
       display: none;
-      top: ${document.documentElement.scrollTop + 250}px;
+      top: ${document.documentElement.scrollTop}px;
+      margin-top: ${(document.documentElement.clientHeight-height)/2}px;
       left: 50%;
-      margin-left: -325px;
+      margin-left: ${width/2}px;
       z-index: 99999;
       width: ${width};
       height: ${height};
@@ -20,15 +21,19 @@ export function insert(width, height) {
    document.body.appendChild(jiframe);
 }
 
-export function display(text) {
+export function search(text) {
    try {
       jiframe.src = "https://jisho.org/search/"+text;
-      jiframe.style.display = "block";
-      displaying = true;
    }
    catch(error) {
       console.error(error);
    }
+}
+
+export function display() {
+   jiframe.style.display = "block";
+   jiframe.style.top = document.documentElement.scrollTop + "px";
+   displaying = true;
 }
 
 export function hide() {
@@ -37,9 +42,14 @@ export function hide() {
 }
 
 export function resizeWidth(width) {
-   jiframe.style.width = parseInt(width)+"px";
+   chrome.storage.local.set({width: width});
+   jiframe.style.width = parseInt(width) + "px";
+   jiframe.style.marginLeft = -(width/2) + "px";
 }
 
 export function resizeHeight(height) {
-   jiframe.style.height = parseInt(height)+"px";
+   chrome.storage.local.set({height: height});
+   jiframe.style.height = parseInt(height) + "px";
+   jiframe.style.top = document.documentElement.scrollTop + "px";
+   jiframe.style.marginTop = (document.documentElement.clientHeight-height)/2 + "px";
 }

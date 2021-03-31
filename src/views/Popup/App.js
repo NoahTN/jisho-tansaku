@@ -1,55 +1,82 @@
 import React from 'react'
 import './App.css'
 
-function App() {
-  let _searchText = "";
-  let width = 650;
-  let height = 500;
-  chrome.storage.sync.get(["width", "height"], function(data) {
-    width = data.width;
-    height = data.height;
-  });
-
-  function handleTextChange(event) {
-    _searchText = event.target.value;
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      searchText: "",
+      width: 650,
+      height: 500
+    }
   }
 
-  function handleWidthChange(event) {
-    chrome.storage.sync.set({width: event.target.value});
-    _sendMessage("resz-w", event.target.value);
+  onComponentDidMount() {
+    chrome.storage.local.get(["width", "height"], function(data) {
+      this.setState({
+        width: data.width,
+        height: data.height
+      });
+    });
+  }
+
+  handleTextChange = (event) => {
+    this.setState({ searchText: event.target.value });
+  }
+
+  handleWidthChange = (event) => {
+    this.setState({ width: event.target.value });
+    this._sendMessage("resz-w", event.target.value);
   } 
 
-  function handleHeightChange(event) {
-    chrome.storage.sync.set({height: event.target.value});
-    _sendMessage("resz-h", event.target.value);
+  handleHeightChange = (event) => {
+    this.setState({ height: event.target.value });
+    this._sendMessage("resz-h", event.target.value);
   }  
 
-  function handleSubmit() {
-    _sendMessage("search", _searchText);
+  handleSubmit = (event) => {
+    event.preventDefault();
+    this._sendMessage("search", this.state.searchText);
   }
 
-  function _sendMessage(type, data) {
+  _sendMessage(type, data) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       chrome.tabs.sendMessage(tabs[0].id, {type: type, data: data});
     });
   }
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <p>Search Jisho</p>
-        <form onSubmit={handleSubmit}>
-          <input type="text" name="jt-popup" onChange={handleTextChange}/>
-          <input type="submit" value="Search"/>
+  resetWidth = () => {
+    this.setState({ width: 650 });
+    this._sendMessage("resz-w", 650);
+  }
+
+  resetHeight = () => {
+    this.setState({ height: 500 });
+    this._sendMessage("resz-h", 500);
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <h3>Jisho Tansaku</h3>
+        <form onSubmit={this.handleSubmit}>
+          <input type="text" name="tansaku" className="search-inp" maxLength = "42" onChange={this.handleTextChange}/>
+          <input type="submit" className="search-btt" value="🔍︎"/>
         </form>
         <br/>
         <label>Width</label>
-        <input type="number" min={0} defaultValue={width} onChange={handleWidthChange}/>
+        <div className="dimen-input">
+          <input type="number" min={0} value={this.state.width} onChange={this.handleWidthChange}/>
+          <button onClick={this.resetWidth}>R</button>
+        </div>
         <label>Height</label>
-        <input type="number" min={0} defaultValue={height} onChange={handleHeightChange}/>
-      </header>
-    </div>
-  );
+        <div className="dimen-input">
+          <input type="number" min={0} value={this.state.height} onChange={this.handleHeightChange}/>
+          <button onClick={this.resetHeight}>R</button>
+        </div>
+      </div>
+    );
+  };
 }
 
-export default App
+export default App;

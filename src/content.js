@@ -1,6 +1,6 @@
 import * as JIFrame from './utils/jisho-iframe';
 
-chrome.storage.sync.get(["width", "height"], function(data) {
+chrome.storage.local.get(["width", "height"], function(data) {
    let width = parseInt(data.width)+"px";
    let height = parseInt(data.height)+"px";
    JIFrame.insert(width, height);
@@ -9,7 +9,8 @@ chrome.storage.sync.get(["width", "height"], function(data) {
 chrome.runtime.onMessage.addListener(
    (request, sender, sendResponse) => {
       if(request.type == "search") {
-         JIFrame.display(request.data);
+         JIFrame.search(request.data);
+         JIFrame.display();
       }
       else if(request.type == "resz-w") {
          JIFrame.resizeWidth(request.data)
