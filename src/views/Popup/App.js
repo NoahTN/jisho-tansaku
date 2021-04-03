@@ -11,8 +11,8 @@ class App extends React.Component {
     }
   }
 
-  onComponentDidMount() {
-    chrome.storage.local.get(["width", "height"], function(data) {
+  componentDidMount() {
+    chrome.storage.local.get(["width", "height"], (data) => {
       this.setState({
         width: data.width,
         height: data.height

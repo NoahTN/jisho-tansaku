@@ -1,3 +1,5 @@
+import { getUriForPhraseScrape, parsePhraseScrapeHtml } from 'unofficial-jisho-api';
+
 export var jiframe;
 export var displaying = false;
 
@@ -8,13 +10,12 @@ export function insert(width, height) {
    jiframe.setAttribute("style", `
       position: absolute;
       display: none;
-      top: ${document.documentElement.scrollTop}px;
-      margin-top: ${(document.documentElement.clientHeight-height)/2}px;
+      margin-top: -${height/2}px;
       left: 50%;
-      margin-left: ${width/2}px;
+      margin-left: -${width/2}px;
       z-index: 99999;
-      width: ${width};
-      height: ${height};
+      width: ${width}px;
+      height: ${height}px;
       box-shadow: 0px 0px 5px;
       border-radius: 5px;
    `);
@@ -22,8 +23,10 @@ export function insert(width, height) {
 }
 
 export function search(text) {
+   // TODO: Use unofficial jisho api for proxy to avoid CORS problems
    try {
       jiframe.src = "https://jisho.org/search/"+text;
+      // getUriForPhraseScrape(text);
    }
    catch(error) {
       console.error(error);
@@ -32,7 +35,7 @@ export function search(text) {
 
 export function display() {
    jiframe.style.display = "block";
-   jiframe.style.top = document.documentElement.scrollTop + "px";
+   jiframe.style.top = (document.documentElement.scrollTop + document.documentElement.clientHeight/2) + "px";
    displaying = true;
 }
 
@@ -42,14 +45,13 @@ export function hide() {
 }
 
 export function resizeWidth(width) {
-   chrome.storage.local.set({width: width});
+   chrome.storage.local.set({ width: width });
    jiframe.style.width = parseInt(width) + "px";
    jiframe.style.marginLeft = -(width/2) + "px";
 }
 
 export function resizeHeight(height) {
-   chrome.storage.local.set({height: height});
+   chrome.storage.local.set({ height: height });
    jiframe.style.height = parseInt(height) + "px";
-   jiframe.style.top = document.documentElement.scrollTop + "px";
-   jiframe.style.marginTop = (document.documentElement.clientHeight-height)/2 + "px";
+   jiframe.style.marginTop = -(height/2) + "px";
 }
