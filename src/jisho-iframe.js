@@ -1,5 +1,3 @@
-import { getUriForPhraseScrape, parsePhraseScrapeHtml } from 'unofficial-jisho-api';
-
 export var jiframe;
 export var displaying = false;
 

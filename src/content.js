@@ -1,4 +1,4 @@
-import * as JIFrame from './utils/jisho-iframe';
+import * as JIFrame from './jisho-iframe';
 
 chrome.storage.local.get(["width", "height"], function(data) {
    JIFrame.insert(data.width, data.height);

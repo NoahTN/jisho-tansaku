@@ -60,7 +60,7 @@ class App extends React.Component {
       <div className="App">
         <h3>Jisho Tansaku</h3>
         <form onSubmit={this.handleSubmit}>
-          <input type="text" name="tansaku" className="search-inp" maxLength = "42" onChange={this.handleTextChange}/>
+          <input autoFocus type="text" name="tansaku" className="search-inp" maxLength = "42" onChange={this.handleTextChange}/>
           <input type="submit" className="search-btt" value="🔍︎"/>
         </form>
         <br/>
