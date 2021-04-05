@@ -23,10 +23,9 @@ export function insert(width, height) {
 }
 
 export function search(text) {
-   // TODO: Use unofficial jisho api for proxy to avoid CORS problems
+   // CORS Error without a proxy
    try {
       jiframe.src = "https://jisho.org/search/"+text;
-      // getUriForPhraseScrape(text);
    }
    catch(error) {
       console.error(error);
