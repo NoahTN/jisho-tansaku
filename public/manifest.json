@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "Extension Name",
+  "name": "Jisho Tansaku",
   "version": "0.1",
-  "description": "Some Description",
+  "description": "Search Jisho",
   "permissions": [
     "contextMenus",
     "https://jisho.org/*",
