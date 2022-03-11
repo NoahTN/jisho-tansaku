@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css'
 
 function App() {
-   // const [searchText, setSearchText] = React.useState("");
+   const [searchText, setSearchText] = React.useState("");
    const [width, setWidth] = React.useState(650);
    const [height, setHeight] = React.useState(500);
 
@@ -13,27 +13,8 @@ function App() {
       });
    });
 
-   // handleTextChange = (event) => {
-   //    this.setState({ searchText: event.target.value });
-   // }
-
-   // handleWidthChange = (event) => {
-   //    this.setState({ width: event.target.value });
-   //    this._sendMessage("resz-w", event.target.value);
-   // }
-
-   // handleHeightChange = (event) => {
-   //    this.setState({ height: event.target.value });
-   //    this._sendMessage("resz-h", event.target.value);
-   // }
-
-   // handleSubmit = (event) => {
-   //    event.preventDefault();
-   //    this._sendMessage("search", this.state.searchText);
-   // }
-
    function executeAndSendMessage(callback, data, type) {
-      callback(data);
+      typeof callback === 'function' && callback(data);
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
          chrome.tabs.sendMessage(tabs[0].id, { type: type, data: data });
       });
@@ -44,9 +25,9 @@ function App() {
          <h3>Jisho Tansaku</h3>
          <form onSubmit={e => {
             e.preventDefault() 
-            executeAndSendMessage({}, e.target.value, "search")
+            executeAndSendMessage({}, searchText, "search")
          }}>
-            <input autoFocus type="text" name="tansaku" className="search-inp" maxLength="42"/>
+            <input autoFocus type="text" name="tansaku" className="search-inp" maxLength="42" onChange={e => setSearchText(e.target.value)}/>
             <input type="submit" className="search-btt" value="🔍︎" />
          </form>
          <br />
