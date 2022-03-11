@@ -8,6 +8,9 @@ const config = {
    devtool: "cheap-module-source-map",
    entry: {
       app: path.join(__dirname, "./static/index.js"),
+      background: path.join(__dirname, "./app/background.js"),
+      content: path.join(__dirname, "./app/content.js"),
+      jiframe: path.join(__dirname, "./app/jisho-iframe.js"),
    },
    output: {
       path: path.resolve(__dirname, "./build"),
@@ -31,9 +34,6 @@ const config = {
       new CopyPlugin({
          patterns: [
             { from: "chrome/images", to: "images" },
-            { from: "app/background.js", to: "background.js" },
-            { from: "app/content.js", to: "content.js" },
-            { from: "app/jisho-iframe.js", to: "jisho-iframe.js" }
          ]
       }),
       new WebpackExtensionManifestPlugin({
