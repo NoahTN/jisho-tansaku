@@ -10,11 +10,11 @@ const config = {
       app: path.join(__dirname, "./static/index.js"),
       background: path.join(__dirname, "./app/background.js"),
       content: path.join(__dirname, "./app/content.js"),
-      jiframe: path.join(__dirname, "./app/jisho-iframe.js"),
    },
    output: {
       path: path.resolve(__dirname, "./build"),
-      filename: "[name].js"
+      filename: "[name].js",
+      clean: true
    },
    resolve: {
       extensions: ["*", ".js"]
@@ -29,6 +29,7 @@ const config = {
          },
          manifest: "manifest.json",
          filename: "index.html",
+         chunks: ["app"],
          template: "./static/index.html"
       }),
       new CopyPlugin({
@@ -40,7 +41,7 @@ const config = {
          config: {
             base: baseManifest
          }
-      })
+      }),
    ],
    module: {
       rules: [
@@ -58,6 +59,6 @@ const config = {
             use: ["file-loader"]
          }
       ]
-   }
+   },
 };
 module.exports = config;
