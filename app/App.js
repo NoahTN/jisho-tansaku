@@ -13,7 +13,6 @@ function App() {
 
    function sendMessage(type, data) {
       chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
-         console.log(tabs);
          chrome.tabs.sendMessage(tabs[0].id, { type: type, data: data });
       });
    }

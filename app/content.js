@@ -2,31 +2,26 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './content.css'
 
-chrome.storage.sync.get(["width", "height"], (data) => {
-   const jframe = <JFrame width={data.width} height={data.height} />;
-   let target = document.getElementById("jframe");
-   if(target == null) {
+let target = document.getElementById("jframe");
+
+if(target == null) {
+   chrome.storage.sync.get(["width", "height"], (data) => {
+      const jframe = <JFrame width={data.width} height={data.height} />;
       const container = document.createElement("div");
       container.id = "jframe";
       target = document.body.appendChild(container);
-   }
-   ReactDOM.render(jframe, target);
-});
-
-function JFrame(props) {
-   const [width, setWidth] = React.useState(props.width);
-   const [height, setHeight] = React.useState(props.height);
-   const [display, setDisplay] = React.useState("none");
-
-   React.useEffect(() => {
+      target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`
+      
       const mappings = {
          "resz-w": (data) => {
             chrome.storage.sync.set({width: data});
-            setWidth(data);
+            jframe.style.width = data+"px";
+            jframe.style.marginLeft = "-"+(data/2)+"px";
          },
          "resz-h": (data) => {
             chrome.storage.sync.set({height: data});
-            setHeight(data);
+            jframe.style.height = data+"px";
+            jframe.style.marginTop = "-"+(data/2)+"px";
          },
          "search": (data) => {
             console.log(data);
@@ -34,15 +29,25 @@ function JFrame(props) {
       }
 
       chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-         console.log(mappings[request.type]);
          mappings[request.type](request.data);
-         setDisplay("block");
+         target.style.display = "block";
+         sendResponse({});
+         return true;
       });
-
       document.addEventListener('click', function(e) {
-         setDisplay("none");
+         target.style.display = "none";
       });
 
+      ReactDOM.render(jframe, target);
+   });
+}
+else {
+   target.style.display = "block";
+   target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`
+}
+
+function JFrame(props) {
+   React.useEffect(() => {
       function search(text) {
          // CORS Error without a proxy
          try {
@@ -55,16 +60,7 @@ function JFrame(props) {
    }, []);
 
    return (
-      <div 
-         style={{
-            top: `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`,
-            display: `${display}`,
-            marginTop: `-${height/2}px`,
-            marginLeft: `-${width/2}px`,
-            width: `${width}px`,
-            height: `${height}px`
-         }}
-      >
+      <div>
          <div>Search Bar</div>
       </div>
    );
