@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import JFrame from './jframe';
 import './content.css'
 
 let target = document.getElementById("jframe");
 
 if(target == null) {
-   chrome.storage.sync.get(["width", "height"], (data) => {
+   chrome.storage.sync.get({ width: 650, height: 500 }, (data) => {
       const jframe = <JFrame width={data.width} height={data.height} />;
       const container = document.createElement("div");
       container.id = "jframe";
@@ -35,7 +36,9 @@ if(target == null) {
          return true;
       });
       document.addEventListener('click', function(e) {
-         target.style.display = "none";
+         if(!document.getElementById('jframe').contains(e.target)) {
+            target.style.display = "none";
+         }
       });
 
       ReactDOM.render(jframe, target);
@@ -44,26 +47,6 @@ if(target == null) {
 else {
    target.style.display = "block";
    target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`
-}
-
-function JFrame(props) {
-   React.useEffect(() => {
-      function search(text) {
-         // CORS Error without a proxy
-         try {
-            // jframe.src = "https://jisho.org/search/"+text;
-         }
-         catch(error) {
-            console.error(error);
-         }
-      }
-   }, []);
-
-   return (
-      <div>
-         <div>Search Bar</div>
-      </div>
-   );
 }
 
 

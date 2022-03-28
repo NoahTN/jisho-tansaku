@@ -4,7 +4,6 @@ chrome.runtime.onInstalled.addListener(function() {
       "title": "Search Jisho",
       "contexts": ["selection"]
    });
-   chrome.storage.sync.set({ width: 650, height: 500});
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {

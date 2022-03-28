@@ -10,6 +10,7 @@ const config = {
       app: path.join(__dirname, "./static/index.js"),
       background: path.join(__dirname, "./app/background.js"),
       content: path.join(__dirname, "./app/content.js"),
+      frame: path.join(__dirname, "./app/jframe.js"),
    },
    output: {
       path: path.resolve(__dirname, "./build"),
