@@ -14,17 +14,31 @@ function JFrame(props) {
    }, []);
 
    return (
-      <div>
-         <input></input>
+      <div id="content">
+         <input id="searchbar"></input>
             <div>Words - XX Found</div>
-            <ol className="results">
-               <li>
-                  <div className="chars">試し</div>
-                  <ol className="definitions">
-                     <li>trial; test</li>
-                  </ol>
-               </li>
-            </ol>
+            <div id="results">
+               <DictEntry/>
+            </div>
+      </div>
+   );
+}
+
+function DictEntry() {
+   return (
+      <div className="entry">
+         <div className="left">
+            <div className="furigana">ため</div>
+            <div className="chars">試し</div>
+         </div>
+         <div className="right">
+            <div className="category-tag"></div>
+            <div className="definitions">
+               <li className="def">trial; test</li>   
+            </div>
+            <div className="forms-tag">Other forms</div>
+            <div className="forms">験し 【ためし】、験 【ためし】</div>
+         </div>
       </div>
    );
 }
