@@ -4,56 +4,84 @@
    z-index: 99999;
    box-shadow: 0px 0px 5px;
    border-radius: 5px;
+   background: #fff;
+   color: #000;
 }
 
-#content {
-   
+#jf-content {
+   margin: 0 auto;
+   max-width: 62.5rem;
+   width: 100%;
+}
+
+#jf-content > h4 {
+   line-height: 1.4;
+   font-size: 1.4375rem;
+   font-weight: bold;
+}
+
+#jf-content h4 > span {
+   font-weight: normal;
+   font-size: 0.8em;
+   color: #666;
 }
 
 #results {
    margin-top: .5em;
 }
 
-.entry {
+.jf-entry {
    padding: 0;
    margin: 0 0 20px 0;
    border-bottom: 1px solid #eee;
 }
 
-.left {
-
+.jf-info {
+   width: 25%;
+   font-size: 24px;
+   float: left;
+   box-sizing: border-box;
 }
 
-.furigana {
-
+.jf-furigana {
+   display: block;
+   font-size: 14px;
+   min-height: 1.15em;
 }
 
-.chars {
-
+.jf-chars {
+   box-sizing: border-box;
+   margin-bottom: 10px;
+   font-size: 31px;
 }
 
-.right {
-
+.jf-definitions {
+   display: inline-block;
+   width: 75%;
+   padding: 0 0.46875rem;
+   font-size: 16px;
+   line-height: 1.5;
+   margin-bottom: 10px;
+   box-sizing: border-box;
 }
 
-.category-tag {
-
+.jf-def-list {
+   margin: 0;
 }
 
-.definitions {
-
+.jf-def {
+   font-size: 19px;
 }
 
-.def {
-
+.jf-tag {
+   color: #888;
+   font-size: 13px;
+   margin-top: 10px;
+   font-weight: bold;
 }
 
-.forms-tag {
-
-}
-
-.forms {
-
+.jf-forms {
+   font-size: 19px;
 }
 
 

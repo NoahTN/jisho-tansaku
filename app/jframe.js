@@ -14,10 +14,13 @@ function JFrame(props) {
    }, []);
 
    return (
-      <div id="content">
-         <input id="searchbar"></input>
-            <div>Words - XX Found</div>
-            <div id="results">
+      <div id="jf-content">
+         <input id="jf-search"></input>
+            <h4>
+               Words
+               <span>- 404 found</span>
+            </h4>
+            <div id="jf-results">
                <DictEntry/>
             </div>
       </div>
@@ -26,18 +29,20 @@ function JFrame(props) {
 
 function DictEntry() {
    return (
-      <div className="entry">
-         <div className="left">
-            <div className="furigana">ため</div>
-            <div className="chars">試し</div>
-         </div>
-         <div className="right">
-            <div className="category-tag"></div>
-            <div className="definitions">
-               <li className="def">trial; test</li>   
+      <div className="jf-entry">
+         <div className="jf-info">
+            <div className="jf-furigana">
+               <span>ため</span>
             </div>
-            <div className="forms-tag">Other forms</div>
-            <div className="forms">験し 【ためし】、験 【ためし】</div>
+            <div className="jf-chars">試し</div>
+         </div>
+         <div className="jf-definitions">
+            <div className="jf-tag">Noun</div>
+            <div className="jf-def-list">
+               <li className="jf-def">trial; test</li>   
+            </div>
+            <div className="jf-tag">Other forms</div>
+            <div className="jf-forms">験し 【ためし】、験 【ためし】</div>
          </div>
       </div>
    );
