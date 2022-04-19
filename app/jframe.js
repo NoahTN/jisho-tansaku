@@ -18,7 +18,7 @@ function JFrame(props) {
          <input id="jf-search"></input>
             <h4>
                Words
-               <span>- 404 found</span>
+               <span> — 404 found</span>
             </h4>
             <div id="jf-results">
                <DictEntry/>
@@ -36,10 +36,13 @@ function DictEntry() {
             </div>
             <div className="jf-chars">試し</div>
          </div>
-         <div className="jf-definitions">
+         <div className="jf-meanings">
             <div className="jf-tag">Noun</div>
-            <div className="jf-def-list">
-               <li className="jf-def">trial; test</li>   
+            <div className="jf-definitions">
+               <div className="jf-def">
+                  <span className="jf-def-num">1. </span>
+                  <span className="jf-def-meaning">trial; test</span>
+               </div>   
             </div>
             <div className="jf-tag">Other forms</div>
             <div className="jf-forms">験し 【ためし】、験 【ためし】</div>

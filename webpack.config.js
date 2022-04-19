@@ -15,6 +15,7 @@ const config = {
    output: {
       path: path.resolve(__dirname, "./build"),
       filename: "[name].js",
+      publicPath: "",
       clean: true
    },
    resolve: {
@@ -47,18 +48,18 @@ const config = {
    module: {
       rules: [
          {
-            test: /\.js$/,
+            test: /\.js/,
             exclude: /node_modules/,
             use: ["babel-loader"]
          },
          {
-            test: /\.css$/,
+            test: /\.css/,
             use: ["style-loader", "css-loader"]
          },
          {
-            test: /\.(png|svg|jpg|gif)$/,
-            use: ["file-loader"]
-         }
+            test: /\.png/,
+            type: "asset/resource"
+         },
       ]
    },
 };
