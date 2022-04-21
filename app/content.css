@@ -75,10 +75,6 @@
    box-sizing: border-box;
 }
 
-.jf-definitions  {
-   margin: 0;
-}
-
 .jf-def-num {
    color: #999;
    line-height: 30px;
@@ -88,7 +84,7 @@
    font-size: 16px;
 }
 
-.jf-def-meaning {
+.jf-def-text {
    font-size: 19px;
 }
 
