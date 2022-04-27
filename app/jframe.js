@@ -1,5 +1,4 @@
 import React from 'react';
-import search from "./search";
 
 function JFrame(props) {
    const [searchText, setSearchText] = React.useState("");
@@ -17,7 +16,9 @@ function JFrame(props) {
 
    function handleSubmit(event) {
       event.preventDefault();
-      search(searchText);
+      chrome.runtime.sendMessage(searchText, function(response) {
+         console.log(response);
+      });
    };
 
    return (
@@ -66,5 +67,28 @@ function DictEntry(props) {
       </div>
    );
 }
+
+// function generate(data) {
+//    return <>
+//       {data.map(entry) => {
+//          return <DictEntry
+//             jfChars={entry.slug}
+
+//          />
+//       }}
+//    </>
+   
+   
+// }
+
+// testEntry["furigana"] = ["ため"];
+// testEntry["jfChars"] = "試し";
+// testEntry["meanings"] = [
+//    {
+//       type: "Noun",
+//       text: "trial; test"
+//    }
+// ];
+// testEntry["forms"] = "験し 【ためし】、験 【ためし】";
 
 export default JFrame;

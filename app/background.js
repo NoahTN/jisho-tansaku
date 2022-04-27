@@ -23,3 +23,13 @@ chrome.action.onClicked.addListener((tab) => {
      files: ["content.js"]
    });
  });
+
+ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+   let input = request;
+   fetch("https://jisho.org/search/"+input)
+      .then((res) => res.text())
+      .then((text) => {
+         sendResponse(text);
+      });
+   return true;
+ });

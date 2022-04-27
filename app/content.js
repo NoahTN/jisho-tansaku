@@ -32,12 +32,13 @@ if(target == null) {
       target.style.height = `${data.height}px`
       target.style.marginTop = `-${data.height/2}px`;
 
-      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-         mappings[request.type](request.data);
-         target.style.display = "block";
-         sendResponse({});
-         return true;
-      });
+      // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+      //    mappings[request.type](request.data);
+      //    target.style.display = "block";
+      //    sendResponse({});
+      //    return true;
+      // });
+
       document.addEventListener('click', function(e) {
          if(!document.getElementById('jframe').contains(e.target)) {
             target.style.display = "none";
