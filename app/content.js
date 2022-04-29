@@ -9,21 +9,21 @@ if(target == null) {
    chrome.storage.sync.get({ width: 650, height: 500 }, (data) => {
       const jframe = <JFrame/>;
       const container = document.createElement("div");
-      const mappings = {
-         "resz-w": (data) => {
-            chrome.storage.sync.set({width: data});
-            jframe.style.width = data+"px";
-            jframe.style.marginLeft = "-"+(data/2)+"px";
-         },
-         "resz-h": (data) => {
-            chrome.storage.sync.set({height: data});
-            jframe.style.height = data+"px";
-            jframe.style.marginTop = "-"+(data/2)+"px";
-         },
-         "search": (data) => {
-            console.log(data);
-         },
-      }
+      // const mappings = {
+      //    "resz-w": (data) => {
+      //       chrome.storage.sync.set({width: data});
+      //       jframe.style.width = data+"px";
+      //       jframe.style.marginLeft = "-"+(data/2)+"px";
+      //    },
+      //    "resz-h": (data) => {
+      //       chrome.storage.sync.set({height: data});
+      //       jframe.style.height = data+"px";
+      //       jframe.style.marginTop = "-"+(data/2)+"px";
+      //    },
+      //    "search": (data) => {
+      //       console.log(data);
+      //    },
+      // }
       container.id = "jframe";
       target = document.body.appendChild(container);
       target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`

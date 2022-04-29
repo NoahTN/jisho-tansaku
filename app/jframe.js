@@ -18,6 +18,13 @@ function JFrame(props) {
       event.preventDefault();
       chrome.runtime.sendMessage(searchText, function(response) {
          console.log(response);
+         var obj = {};
+         response.split('\n').forEach((line) => {
+            var key = line.split(' = ')[0];
+            var value = line.split(' = ')[1];
+            obj[key] = value;
+         });
+         console.log(obj);
       });
    };
 
