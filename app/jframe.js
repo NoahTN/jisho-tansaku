@@ -1,4 +1,5 @@
 import React from 'react';
+import getObjectsFromHTML from './parser';
 
 function JFrame(props) {
    const [searchText, setSearchText] = React.useState("");
@@ -17,14 +18,7 @@ function JFrame(props) {
    function handleSubmit(event) {
       event.preventDefault();
       chrome.runtime.sendMessage(searchText, function(response) {
-         console.log(response);
-         var obj = {};
-         response.split('\n').forEach((line) => {
-            var key = line.split(' = ')[0];
-            var value = line.split(' = ')[1];
-            obj[key] = value;
-         });
-         console.log(obj);
+         const objects = getObjectsFromHTML(response);
       });
    };
 
