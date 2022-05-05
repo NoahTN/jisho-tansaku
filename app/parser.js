@@ -5,7 +5,7 @@ function getObjectsFromHTML(rawHTML) {
    const result = [];
    root.set_content(root.querySelector("#primary"));
    let content = root.querySelectorAll("[class='concept_light clearfix']");
-   console.log(content);
+   // console.log(content);
    for(const entry of content) {
       result.push({
          furigana: parseFurigana(entry.querySelector(".furigana")),
