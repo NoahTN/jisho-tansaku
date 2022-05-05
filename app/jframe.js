@@ -3,22 +3,14 @@ import getObjectsFromHTML from './parser';
 
 function JFrame(props) {
    const [searchText, setSearchText] = React.useState("");
-
-   const testEntry = {};
-   testEntry["furigana"] = ["ため"];
-   testEntry["jfChars"] = "試し";
-   testEntry["meanings"] = [
-      {
-         type: "Noun",
-         text: "trial; test"
-      }
-   ];
-   testEntry["forms"] = "験し 【ためし】、験 【ためし】";
+   const [searchResults, setSearchResults] = React.useState([]);
 
    function handleSubmit(event) {
       event.preventDefault();
       chrome.runtime.sendMessage(searchText, function(response) {
-         const objects = getObjectsFromHTML(response);
+         let result = getObjectsFromHTML(response);
+         console.log(result);
+         setSearchResults(result);
       });
    };
 
@@ -33,7 +25,14 @@ function JFrame(props) {
             <span> — 404 found</span>
          </h4>
          <div id="jf-results">
-            <DictEntry {...testEntry} />
+            {searchResults.map(entry => {
+               return <DictEntry
+                  furigana={entry.furigana}
+                  chars={entry.chars}
+                  defs={entry.defs}
+                  key={entry.chars}
+               />
+            })}
          </div>
       </div>
    );
@@ -44,52 +43,29 @@ function DictEntry(props) {
       <div className="jf-entry">
          <div className="jf-info">
             <div className="jf-furigana">
-               {props.furigana.map((chars, index) => {
-                  return <span key={index}>{chars}</span>;
+               {props.furigana.map((furi, index) => {
+                  return <span key={index}>{furi}</span>;
                })}
             </div>
-            <div className="jf-chars">{props.jfChars}</div>
+            <div className="jf-chars">{props.chars}</div>
          </div>
-         <div className="jf-meanings">
-            {props.meanings.map((meaning, index) => {
+         <div className="jf-defs">
+            {props.defs.map((def, index) => {
                return (
                   <React.Fragment key={index}>
-                     <div className="jf-tag">{meaning.type}</div>
+                     <div className="jf-tag">{def.tag}</div>
                      <div className="jf-def">
-                        <span className="jf-def-num">{index+1}. </span>
-                        <span className="jf-def-text">{meaning.text}</span>
+                        {!["W", "O"].includes(def.tag[0]) &&
+                           <span className="jf-def-num">{index+1}. </span>
+                        }
+                        <span className="jf-def-text">{def.text}</span>
                      </div>
                   </React.Fragment>
                );
             })}
-            <div className="jf-tag">Other forms</div>
-            <div className="jf-forms">{props.forms}</div>
          </div>
       </div>
    );
 }
-
-// function generate(data) {
-//    return <>
-//       {data.map(entry) => {
-//          return <DictEntry
-//             jfChars={entry.slug}
-
-//          />
-//       }}
-//    </>
-   
-   
-// }
-
-// testEntry["furigana"] = ["ため"];
-// testEntry["jfChars"] = "試し";
-// testEntry["meanings"] = [
-//    {
-//       type: "Noun",
-//       text: "trial; test"
-//    }
-// ];
-// testEntry["forms"] = "験し 【ためし】、験 【ためし】";
 
 export default JFrame;

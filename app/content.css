@@ -11,6 +11,7 @@
    line-height: 1.5;
    margin: 0;
    padding: 0;
+   overflow: auto;
 }
 
 #jf-content {
@@ -65,7 +66,7 @@
    font-size: 31px;
 }
 
-.jf-meanings {
+.jf-defs {
    display: inline-block;
    width: 75%;
    padding: 0 0.46875rem;

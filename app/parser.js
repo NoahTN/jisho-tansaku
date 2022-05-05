@@ -1,34 +1,47 @@
 import { parse } from "node-html-parser";
 
-export default function getObjectsFromHTML(rawHTML) {
+function getObjectsFromHTML(rawHTML) {
    const root = parse(rawHTML);
    const result = [];
    root.set_content(root.querySelector("#primary"));
    let content = root.querySelectorAll("[class='concept_light clearfix']");
    console.log(content);
-   // for(const entry of content) {
-   //    result.push({
-   //       "furigana": parseFurigana(entry.childNodes[1].childNodes[1].childNodes[1]),
-   //       "chars": [],
-   //       "defs": [],
-   //       "other": ""
-   //    });  
-   // }
+   for(const entry of content) {
+      result.push({
+         furigana: parseFurigana(entry.querySelector(".furigana")),
+         chars: parseChars(entry.querySelector(".text")),
+         defs: parseDefs(entry.querySelector(".meanings-wrapper"))
+      });  
+   }
+   return result;
 }
 
 function parseFurigana(nodes) {
    let result = [];
-  
+   for(const furi of nodes.getElementsByTagName("span")) {
+      result.push(furi.text);
+   }
+   // console.log("furigana", result);
+   return result;
 }
 
-function parseChars() {
-
+function parseChars(node) {
+   console.log("chars", node.text);
+   return node.text.trim();
 }
 
-function parseDefs() {
-   
+function parseDefs(nodes) {
+   let result = [];
+   let tags = nodes.querySelectorAll(".meaning-tags");
+   let defs = nodes.querySelectorAll(".meaning-meaning");
+   for(let i = 0; i < tags.length; ++i) {
+      result.push({
+         "tag": tags[i].text, 
+         "text": defs[i].text
+      });
+   }
+   // console.log(result);
+   return result;
 }
 
-function parseOtherForms(){
-
-}
+export default getObjectsFromHTML;

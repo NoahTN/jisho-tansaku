@@ -32,25 +32,19 @@ if(target == null) {
       target.style.height = `${data.height}px`
       target.style.marginTop = `-${data.height/2}px`;
 
-      // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      //    mappings[request.type](request.data);
-      //    target.style.display = "block";
-      //    sendResponse({});
-      //    return true;
-      // });
-
-      document.addEventListener('click', function(e) {
+      document.addEventListener('mousedown', function(e) {
          if(!document.getElementById('jframe').contains(e.target)) {
             target.style.display = "none";
          }
       });
 
-      ReactDOM.render(jframe, target);
+      ReactDOM.render(jframe, target, () => {document.getElementById("jf-search").focus()});
    });
 }
 else {
    target.style.display = "block";
    target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`
+   document.getElementById("jf-search").focus();
 }
 
 
