@@ -1,5 +1,6 @@
 import React from 'react';
 import getObjectsFromHTML from './parser';
+import Constants from './constants';
 
 function JFrame(props) {
    const [searchText, setSearchText] = React.useState("");
@@ -55,10 +56,20 @@ function DictEntry(props) {
                   <React.Fragment key={index}>
                      <div className="jf-tag">{def.tag}</div>
                      <div className="jf-def">
-                        {!["W", "O"].includes(def.tag[0]) &&
-                           <span className="jf-def-num">{index+1}. </span>
+                        {(() => {
+                           switch(def.type) {
+                              case Constants.WIKIPEDIA_DEF:
+                              case Constants.OTHERS_DEF:
+                              case Constants.NOTES_DEF:
+                                 return <span className="jf-def-notes">{def.data[0]}</span>
+                              default:
+                                 return <>
+                                    <span className="jf-def-num">{index+1}. </span>
+                                    <span className="jf-def-text">{def.data[0]}</span>
+                                 </>
+                           }
                         }
-                        <span className="jf-def-text">{def.text}</span>
+                        )()}
                      </div>
                   </React.Fragment>
                );

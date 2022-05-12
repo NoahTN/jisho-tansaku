@@ -11,6 +11,7 @@
    line-height: 1.5;
    margin: 0;
    padding: 0;
+   resize: both;
    overflow: auto;
 }
 
@@ -87,6 +88,10 @@
 
 .jf-def-text {
    font-size: 19px;
+}
+
+.jf-def-notes {
+   font-size: 14px;
 }
 
 .jf-tag {
