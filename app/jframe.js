@@ -59,13 +59,23 @@ function DictEntry(props) {
                         {(() => {
                            switch(def.type) {
                               case Constants.WIKIPEDIA_DEF:
+                                 return <>
+                                    <span className="jf-def-text">{def.data[0]}</span>
+                                    <span className="jf-def-abs">{def.data[1]}</span>
+                                 </>
                               case Constants.OTHERS_DEF:
+                                 return <>
+                                    {def.data.map((form, formIndex) => {
+                                       return <span key={formIndex}>{form + (formIndex < def.data.length-1 ? "、" : "")}</span>
+                                    })}
+                                 </>
                               case Constants.NOTES_DEF:
                                  return <span className="jf-def-notes">{def.data[0]}</span>
                               default:
                                  return <>
                                     <span className="jf-def-num">{index+1}. </span>
                                     <span className="jf-def-text">{def.data[0]}</span>
+                                    {def.data.length > 1 ? <span className="jf-def-supp">{def.data[1]}</span> : ""}
                                  </>
                            }
                         }

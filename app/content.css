@@ -90,6 +90,18 @@
    font-size: 19px;
 }
 
+.jf-def-abs {
+   font-size: 14px;
+   color: #666;
+   margin-left: 8px;
+}
+
+.jf-def-supp {
+   font-size: 14px;
+   color: #999;
+   margin-left: 8px;
+}
+
 .jf-def-notes {
    font-size: 14px;
 }

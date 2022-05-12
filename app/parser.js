@@ -6,7 +6,7 @@ function getObjectsFromHTML(rawHTML) {
    const result = [];
    root.set_content(root.querySelector("#primary"));
    let content = root.querySelectorAll("[class='concept_light clearfix']");
-   console.log(content);
+   // console.log(content);
    for(const entry of content) {
       result.push({
          furigana: parseFurigana(entry.querySelector(".furigana")),
@@ -53,7 +53,7 @@ function parseDefs(nodes) {
       }
       else if(tag[0] === "O") {
          result.type = Constants.OTHERS_DEF;
-         for(let form of defs[index].querySelectorAll("span")) {
+         for(let form of defs[index].querySelectorAll(".meaning-meaning > span")) {
             result.data.push(form.text);
          }
       }
@@ -64,7 +64,7 @@ function parseDefs(nodes) {
       else {
          result.type = Constants.DEFAULT_DEF;
          result.data.push(defs[index].querySelector(".meaning-meaning").text);
-         const suppInfo = defs[index].querySelector(".supplemental-info");
+         const suppInfo = defs[index].querySelector(".supplemental_info");
          if(suppInfo)
             result.data.push(suppInfo.text);
       }
@@ -75,7 +75,7 @@ function parseDefs(nodes) {
       result.push(formatDef(i));
    }
 
-   console.log(result);
+   // console.log(result);
    return result;
 }
 
