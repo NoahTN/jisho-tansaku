@@ -32,7 +32,7 @@
    color: #222;
 }
 
-#jf-content h4 > span {
+#jf-content > h4 > span {
    font-weight: normal;
    font-size: 18px;
    color: #666;
@@ -55,10 +55,25 @@
    box-sizing: border-box;
 }
 
+.jf-info-long {
+   width: 100%;
+}
+
 .jf-furigana {
-   display: block;
    font-size: 14px;
    min-height: 1.15em;
+   box-sizing: border-box;
+}
+
+.jf-furigana > span {
+   display: inline-block;
+   text-align: center;
+   min-width: 2.25em;
+   line-height: 1.15;
+}
+
+.jf-furigana > .kana {
+   min-width: 2em;
 }
 
 .jf-chars {
@@ -75,6 +90,10 @@
    line-height: 1.5;
    margin-bottom: 10px;
    box-sizing: border-box;
+}
+
+.jf-defs-long {
+   padding-left: calc(25% + .46875rem);
 }
 
 .jf-def-num {

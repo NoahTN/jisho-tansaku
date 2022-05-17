@@ -42,15 +42,15 @@ function JFrame(props) {
 function DictEntry(props) {
    return (
       <div className="jf-entry">
-         <div className="jf-info">
+         <div className={"jf-info" + (props.chars.length > 5 ? " jf-info-long" : "")}>
             <div className="jf-furigana">
                {props.furigana.map((furi, index) => {
-                  return <span key={index}>{furi}</span>;
+                  return <span key={index} className={furi ? "kana" : ""}>{furi}</span>;
                })}
             </div>
             <div className="jf-chars">{props.chars}</div>
          </div>
-         <div className="jf-defs">
+         <div className={"jf-defs" + (props.chars.length > 5 ? " jf-defs-long" : "")}>
             {props.defs.map((def, index) => {
                return (
                   <React.Fragment key={index}>
