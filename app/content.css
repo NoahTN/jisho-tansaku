@@ -38,9 +38,40 @@
    color: #666;
 }
 
-#results {
+#jf-form {
+   background-color: #ddd;
+   border-radius: 5px;
+   padding: 4px;
+   box-sizing: content-box;
+   display:flex;
+}
+
+#jf-searchbar {
+   position: relative;
+   z-index: 2;
+   margin: 0;
+   padding: 3px 0 3px 10px;
+   font-size: 22px;
+   height: 34px;
+   box-shadow: none;
+   border: none;
+}
+
+#jf-submit {
+   float: right;
+   margin: 0;
+   padding: 7px 7px 2px 8px;
+   border: none;
+   background: #eee;
+   font-weight: normal;
+   color: #555;
+   border-radius: 0 1px 1px 0;
+}
+
+#jf-results {
    margin-top: .5em;
 }
+
 
 .jf-entry {
    padding: 0 0 0 12px;

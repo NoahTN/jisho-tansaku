@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import JFrame from './jframe';
-import './content.css'
 
 let target = document.getElementById("jframe");
 
 if(target == null) {
+   require("./content.css");
+
    chrome.storage.sync.get({ width: 650, height: 500 }, (data) => {
       const jframe = <JFrame/>;
       const container = document.createElement("div");
@@ -38,13 +39,13 @@ if(target == null) {
          }
       });
 
-      ReactDOM.render(jframe, target, () => {document.getElementById("jf-search").focus()});
+      ReactDOM.render(jframe, target, () => {document.getElementById("jf-searchbar").focus()});
    });
 }
 else {
    target.style.display = "block";
    target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`
-   document.getElementById("jf-search").focus();
+   document.getElementById("jf-searchbar").focus();
 }
 
 

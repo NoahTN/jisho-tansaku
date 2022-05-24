@@ -4,36 +4,55 @@ import Constants from './constants';
 
 function JFrame(props) {
    const [searchText, setSearchText] = React.useState("");
+   const [lastSearchedText, setLastSearchedText] = React.useState("");
    const [searchResults, setSearchResults] = React.useState([]);
 
    function handleSubmit(event) {
       event.preventDefault();
-      chrome.runtime.sendMessage(searchText, function(response) {
-         let result = getObjectsFromHTML(response);
-         console.log(result);
-         setSearchResults(result);
-      });
+      if(searchText) {
+         chrome.runtime.sendMessage(searchText, function(response) {
+            let result = getObjectsFromHTML(response);
+            console.log(result);
+            setSearchResults(result);
+            setLastSearchedText(searchText);
+         });
+      }
    };
+
+   function getSearchResults() {
+      if(!lastSearchedText) {
+         return;
+      }
+
+      if(searchResults.length > 0) {
+         return searchResults.map(entry =>
+            <DictEntry
+               furigana={entry.furigana}
+               chars={entry.chars}
+               defs={entry.defs}
+               key={entry.chars}
+            />
+         );
+
+      }
+
+      return <div>
+         Sorry, couldn't find anything matching {lastSearchedText}
+      </div>;
+   }
 
    return (
       <div id="jf-content">
-         <form onSubmit={handleSubmit}>
-            <input type="text" value={searchText} onChange={e => setSearchText(e.target.value)} id="jf-search"></input>
-            <input type="submit" value="submit"></input>
+         <form id="jf-form" onSubmit={handleSubmit}>
+            <input id="jf-searchbar" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} autoComplete="off"></input>
+            <input id="jf-submit" type="submit" value="Search"></input>
          </form>
          <h4>
             Words
             <span> — 404 found</span>
          </h4>
          <div id="jf-results">
-            {searchResults.map(entry => {
-               return <DictEntry
-                  furigana={entry.furigana}
-                  chars={entry.chars}
-                  defs={entry.defs}
-                  key={entry.chars}
-               />
-            })}
+            { getSearchResults() }
          </div>
       </div>
    );
