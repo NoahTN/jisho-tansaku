@@ -13,6 +13,7 @@
    padding: 0;
    resize: both;
    overflow: auto;
+   text-align: left;
 }
 
 #jf-content {
@@ -42,30 +43,45 @@
    background-color: #ddd;
    border-radius: 5px;
    padding: 4px;
-   box-sizing: content-box;
-   display:flex;
+}
+
+#jf-form-inner {
+   width: 100%;
+   border-radius: 2px;
+   background: #fff;
+   padding: 4px;
+   display: flex;
+   align-items: center;
+   box-sizing: border-box;
 }
 
 #jf-searchbar {
    position: relative;
-   z-index: 2;
+   color: rgb(0, 0, 0, 0.75);
    margin: 0;
    padding: 3px 0 3px 10px;
    font-size: 22px;
    height: 34px;
    box-shadow: none;
    border: none;
+   background: none;
+   flex: 1;
 }
 
-#jf-submit {
+#jf-submit-btn {
    float: right;
    margin: 0;
-   padding: 7px 7px 2px 8px;
+   padding: 7px 7px 7px 8px;
    border: none;
    background: #eee;
    font-weight: normal;
    color: #555;
    border-radius: 0 1px 1px 0;
+}
+
+#jf-submit-btn > div {
+   font-size: 24px;
+   line-height: 1em;;
 }
 
 #jf-results {
@@ -99,18 +115,19 @@
 .jf-furigana > span {
    display: inline-block;
    text-align: center;
-   min-width: 2.25em;
+   min-width: 2em;
    line-height: 1.15;
 }
 
 .jf-furigana > .kana {
-   min-width: 2em;
+   min-width: 2.25em;
 }
 
 .jf-chars {
    box-sizing: border-box;
    margin-bottom: 10px;
    font-size: 31px;
+   line-height: 1.1;
 }
 
 .jf-defs {
