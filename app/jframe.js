@@ -45,7 +45,7 @@ function JFrame(props) {
       <div id="jf-content">
          <form id="jf-form" onSubmit={handleSubmit}>
             <div id="jf-form-inner">
-               <input id="jf-searchbar" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} autoComplete="off" spellcheck="false"></input>
+               <input id="jf-searchbar" type="text" value={searchText} onChange={e => setSearchText(e.target.value)} autoComplete="off" spellCheck="false"></input>
                <button id="jf-submit-btn" type="submit">
                   <div>🔍︎</div>
                </button>
