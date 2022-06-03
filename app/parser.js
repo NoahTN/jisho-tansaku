@@ -3,18 +3,19 @@ import Constants from "./constants";
 
 function getObjectsFromHTML(rawHTML) {
    const root = parse(rawHTML);
-   const result = [];
+   const entries = [];
    root.set_content(root.querySelector("#primary"));
+   const countText = root.querySelector(".result_count").text;
    let content = root.querySelectorAll("[class='concept_light clearfix']");
    // console.log(content);
    for(const entry of content) {
-      result.push({
+      entries.push({
          furigana: parseFurigana(entry.querySelector(".furigana")),
          chars: parseChars(entry.querySelector(".text")),
          defs: parseDefs(entry.querySelector(".meanings-wrapper"))
       });  
    }
-   return result;
+   return [entries, countText];
 }
 
 function parseFurigana(nodes) {

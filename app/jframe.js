@@ -6,14 +6,16 @@ function JFrame(props) {
    const [searchText, setSearchText] = React.useState("");
    const [lastSearchedText, setLastSearchedText] = React.useState("");
    const [searchResults, setSearchResults] = React.useState([]);
+   const [resultCountText, setResultCountText] = React.useState("");
 
    function handleSubmit(event) {
       event.preventDefault();
       if(searchText) {
          chrome.runtime.sendMessage(searchText, function(response) {
             let result = getObjectsFromHTML(response);
-            console.log(result);
-            setSearchResults(result);
+            console.log(result[0]);
+            setSearchResults(result[0]);
+            setResultCountText(result[1]);
             setLastSearchedText(searchText);
          });
       }
@@ -51,10 +53,12 @@ function JFrame(props) {
                </button>
             </div>
          </form>
-         <h4>
-            Words
-            <span> — 404 found</span>
-         </h4>
+         {resultCountText.length > 0 &&
+            <h4>
+               Words
+               <span>{resultCountText}</span>
+            </h4>
+         }
          <div id="jf-results">
             { getSearchResults() }
          </div>
