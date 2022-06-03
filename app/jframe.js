@@ -13,7 +13,7 @@ function JFrame(props) {
       if(searchText) {
          chrome.runtime.sendMessage(searchText, function(response) {
             let result = getObjectsFromHTML(response);
-            console.log(result[0]);
+            // console.log(result[0]);
             setSearchResults(result[0]);
             setResultCountText(result[1]);
             setLastSearchedText(searchText);
