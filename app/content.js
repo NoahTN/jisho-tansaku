@@ -27,11 +27,12 @@ if(target == null) {
       // }
       container.id = "jframe";
       target = document.body.appendChild(container);
-      target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`
-      target.style.width = `${data.width}px`
-      target.style.marginLeft = `-${data.width/2}px`;
-      target.style.height = `${data.height}px`
-      target.style.marginTop = `-${data.height/2}px`;
+      target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 - data.height/2 + "px"}`
+      target.style.left = `${document.documentElement.clientWidth/2 - data.width/2 + "px"}`
+      // target.style.width = `${data.width}px`
+      // target.style.marginLeft = `-${data.width/2}px`;
+      // target.style.height = `${data.height}px`
+      // target.style.marginTop = `-${document.documentElement.scrollTop + document.documentElement.clientHeight/2 - data.height/2 + "px"}`
 
       document.addEventListener('mousedown', function(e) {
          if(!document.getElementById('jframe').contains(e.target)) {
@@ -44,7 +45,7 @@ if(target == null) {
 }
 else {
    target.style.display = "block";
-   target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 + "px"}`
+   target.style.top = `${document.documentElement.scrollTop + document.documentElement.clientHeight/2 - 500/2 + "px"}`
    document.getElementById("jf-searchbar").focus();
 }
 

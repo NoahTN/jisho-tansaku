@@ -1,5 +1,15 @@
 #jframe {
    position: absolute;
+}
+
+.drag-handle {
+   background-color: #69D838;
+   height: 0.75em;
+   cursor: move;
+}
+
+#jf-content {
+   position: absolute;
    left: 50%;
    z-index: 99999;
    box-shadow: 0px 0px 5px;
@@ -14,12 +24,8 @@
    resize: both;
    overflow: auto;
    text-align: left;
-}
-
-#jf-content {
-   margin: 0;
-   width: 100%;
-   font-family: Helvetica, Arial, sans-serif;
+   width: 650px;
+   height: 500px;
 }
 
 #jf-content > h4 {
