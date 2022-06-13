@@ -1,5 +1,6 @@
 #jframe {
-   position: absolute;
+   position: fixed;
+   z-index: 99999;
 }
 
 .drag-handle {
@@ -10,8 +11,6 @@
 
 #jf-content {
    position: absolute;
-   left: 50%;
-   z-index: 99999;
    box-shadow: 0px 0px 5px;
    border-radius: 5px;
    background: #fff;

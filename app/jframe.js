@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import getObjectsFromHTML from './parser';
 import Constants from './constants';
 import Draggable from 'react-draggable';
@@ -8,6 +8,21 @@ function JFrame(props) {
    const [lastSearchedText, setLastSearchedText] = React.useState("");
    const [searchResults, setSearchResults] = React.useState([]);
    const [resultCountText, setResultCountText] = React.useState("");
+   const [leftBounds, setLeftBounds] = React.useState(-document.documentElement.clientWidth/2 + 650/2);
+   const [rightBounds, setRightBounds] = React.useState(document.documentElement.clientWidth/2 - 650/2);
+
+   useEffect(() => {
+      window.addEventListener('resize', onWindowResize);
+
+      return () => {
+         window.removeEventListener('resize', onWindowResize);
+      };
+   });
+
+   function onWindowResize() {
+      setLeftBounds(-document.documentElement.clientWidth/2 + 650/2);
+      setRightBounds(document.documentElement.clientWidth/2 - 650/2);
+   };
 
    function handleSubmit(event) {
       event.preventDefault();
@@ -50,10 +65,10 @@ function JFrame(props) {
          // bounds="body"
          
          bounds={{
-            top: -(document.documentElement.scrollTop + document.documentElement.clientHeight/2 - 500/2), 
-            left: -(document.documentElement.clientWidth/2 - 650/2) + 10, 
-            right: document.documentElement.clientWidth/2 - 650/2 - 10, 
-            bottom: document.documentElement.scrollHeight - document.documentElement.scrollTop - 500
+            top: -document.documentElement.clientHeight/2 + 500/2, 
+            left: leftBounds, 
+            right: rightBounds, 
+            bottom: document.documentElement.clientHeight/2 - 500/2
          }}
          // defaultPosition={{x: document.documentElement.clientHeight/2 - 650/2, y: document.documentElement.scrollTop + document.documentElement.clientHeight/2 - 500/2}}
       >
