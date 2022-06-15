@@ -8,7 +8,7 @@ if(target == null) {
    require("./content.css");
 
    chrome.storage.sync.get({ width: 650, height: 500 }, (data) => {
-      const jframe = <JFrame/>;
+      const jframe = <JFrame height={data.height} width={data.width}/>;
       const container = document.createElement("div");
       // const mappings = {
       //    "resz-w": (data) => {
@@ -27,8 +27,8 @@ if(target == null) {
       // }
       container.id = "jframe";
       target = document.body.appendChild(container);
-      target.style.top = `${document.documentElement.clientHeight/2 - data.height/2 +"px"}`
-      target.style.left = `${document.documentElement.clientWidth/2 - data.width/2 + "px"}`
+      // target.style.top = `${document.documentElement.clientHeight/2 - data.height/2 +"px"}`
+      // target.style.left = `${document.documentElement.clientWidth/2 - data.width/2 + "px"}`
       // target.style.width = `${data.width}px`
       // target.style.marginLeft = `-${data.width/2}px`;
       // target.style.height = `${data.height}px`
@@ -40,10 +40,10 @@ if(target == null) {
          }
       });
 
-      window.addEventListener("resize", function(e) {
-         target.style.top = `${document.documentElement.clientHeight/2 - data.height/2 +"px"}`
-         target.style.left = `${document.documentElement.clientWidth/2 - data.width/2 + "px"}`
-      });
+      // window.addEventListener("resize", function(e) {
+      //    target.style.top = `${document.documentElement.clientHeight/2 - data.height/2 +"px"}`
+      //    target.style.left = `${document.documentElement.clientWidth/2 - data.width/2 + "px"}`
+      // });
 
       ReactDOM.render(jframe, target, () => {document.getElementById("jf-searchbar").focus()});
    });

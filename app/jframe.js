@@ -1,18 +1,52 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import getObjectsFromHTML from './parser';
 import Constants from './constants';
 import Draggable from 'react-draggable';
 
 function JFrame(props) {
+   const jFrameRef = React.useRef();
    const [searchText, setSearchText] = React.useState("");
    const [lastSearchedText, setLastSearchedText] = React.useState("");
    const [searchResults, setSearchResults] = React.useState([]);
    const [resultCountText, setResultCountText] = React.useState("");
-   const [leftBounds, setLeftBounds] = React.useState(-document.documentElement.clientWidth/2 + 650/2);
-   const [rightBounds, setRightBounds] = React.useState(document.documentElement.clientWidth/2 - 650/2);
+   const [posAndBounds, dispatch] = React.useReducer((state, action) => {
+      switch(action.type) {
+         case Constants.ACTION_WINDOW_RESIZE:
+            return {
+               top: document.documentElement.clientHeight/2 - jFrameRef.current.offsetHeight/2,
+               left: document.documentElement.clientWidth/2 - jFrameRef.current.offsetWidth/2,
+               leftBounds: -document.documentElement.clientWidth/2 + jFrameRef.current.offsetWidth/2,
+               rightBounds:document.documentElement.clientWidth/2 - jFrameRef.current.offsetWidth/2
+            };
+         case Constants.ACTION_JFRAME_RESIZE:
+            return {...state};
+         default:
+            throw new Error();
+      }
+   }, {
+      top: document.documentElement.clientHeight/2 - props.height/2,
+      left: document.documentElement.clientWidth/2 - props.width/2,
+      leftBounds: -document.documentElement.clientWidth/2 + props.width/2,
+      rightBounds: document.documentElement.clientWidth/2 - props.width/2
+   });
 
-   useEffect(() => {
+   React.useEffect(() => {
+      // jFrameRef.current.style.top = posAndBounds.top+"px";
+      // jFrameRef.current.style.left = posAndBounds.left+"px";
+
       window.addEventListener('resize', onWindowResize);
+      // new ResizeObserver(() => {
+      //    console.log({
+      //       width: jfContent.offsetWidth,
+      //       height: jfContent.offsetHeight
+      //    })
+      //    setLeftBounds(-document.documentElement.clientWidth/2 + jfContent.offsetWidth/2);
+      //    setRightBounds(document.documentElement.clientWidth/2 - jfContent.offsetWidth/2);
+      //    jFrameRef.current.style.top = pos.x;
+      //    jFrameRef.current.style.left = pos.y
+      //    jFrameRef.current.style.maxWidth = `${ + "px"}`
+      //    jFrameRef.current.style.maxHeight = `${ + "px"}`
+      // }).observe(jFrameRef.current);
 
       return () => {
          window.removeEventListener('resize', onWindowResize);
@@ -20,8 +54,9 @@ function JFrame(props) {
    });
 
    function onWindowResize() {
-      setLeftBounds(-document.documentElement.clientWidth/2 + 650/2);
-      setRightBounds(document.documentElement.clientWidth/2 - 650/2);
+      // setLeftBounds(-document.documentElement.clientWidth/2 + jfContent.offsetWidth/2);
+      // setRightBounds(document.documentElement.clientWidth/2 - jfContent.offsetWidth/2);
+      dispatch({type: Constants.ACTION_WINDOW_RESIZE});
    };
 
    function handleSubmit(event) {
@@ -66,13 +101,13 @@ function JFrame(props) {
          
          bounds={{
             top: -document.documentElement.clientHeight/2 + 500/2, 
-            left: leftBounds, 
-            right: rightBounds, 
+            left: posAndBounds.leftBounds, 
+            right: posAndBounds.rightBounds, 
             bottom: document.documentElement.clientHeight/2 - 500/2
          }}
          // defaultPosition={{x: document.documentElement.clientHeight/2 - 650/2, y: document.documentElement.scrollTop + document.documentElement.clientHeight/2 - 500/2}}
       >
-         <div id="jf-content">
+         <div id="jf-content" ref={jFrameRef} style={{top: posAndBounds.top+"px", left: posAndBounds.left+"px"}}>
             <div className="drag-handle"></div>
             <form id="jf-form" onSubmit={handleSubmit}>
                <div id="jf-form-inner">
