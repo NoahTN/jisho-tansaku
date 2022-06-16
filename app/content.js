@@ -4,7 +4,7 @@ import JFrame from './jframe';
 
 let target = document.getElementById("jframe");
 
-if(target == null) {
+if(target === null) {
    require("./content.css");
 
    chrome.storage.sync.get({ width: 650, height: 500 }, (data) => {
@@ -45,7 +45,7 @@ if(target == null) {
       //    target.style.left = `${document.documentElement.clientWidth/2 - data.width/2 + "px"}`
       // });
 
-      ReactDOM.render(jframe, target, () => {document.getElementById("jf-searchbar").focus()});
+      ReactDOM.render(jframe, target, () => {});
    });
 }
 else {

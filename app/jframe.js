@@ -5,6 +5,7 @@ import Draggable from 'react-draggable';
 
 function JFrame(props) {
    const jFrameRef = React.useRef();
+   const searchbarRef = React.useRef();
    const [searchText, setSearchText] = React.useState("");
    const [lastSearchedText, setLastSearchedText] = React.useState("");
    const [searchResults, setSearchResults] = React.useState([]);
@@ -33,6 +34,19 @@ function JFrame(props) {
    React.useEffect(() => {
       // jFrameRef.current.style.top = posAndBounds.top+"px";
       // jFrameRef.current.style.left = posAndBounds.left+"px";
+      searchbarRef.current.focus();
+
+      chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
+         setSearchText(response);
+         searchUsingText(response);
+      });
+
+      chrome.runtime.onMessage.addListener(request => {
+         if (request.type === Constants.TYPE_SEARCH_CONTEXT) {
+            setSearchText(request.data);
+            searchUsingText(request.data);
+         }
+      });
 
       window.addEventListener('resize', onWindowResize);
       // new ResizeObserver(() => {
@@ -48,10 +62,22 @@ function JFrame(props) {
       //    jFrameRef.current.style.maxHeight = `${ + "px"}`
       // }).observe(jFrameRef.current);
 
-      return () => {
-         window.removeEventListener('resize', onWindowResize);
-      };
-   });
+      // return () => {
+      //    window.removeEventListener('resize', onWindowResize);
+      // };
+   }, []);
+
+   function searchUsingText(text) {
+      if(text.length) {
+         chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text}, (response) => {
+            let result = getObjectsFromHTML(response);
+            // console.log(result[0]);
+            setSearchResults(result[0]);
+            setResultCountText(result[1]);
+            setLastSearchedText(text);
+         });
+      }
+   }
 
    function onWindowResize() {
       // setLeftBounds(-document.documentElement.clientWidth/2 + jfContent.offsetWidth/2);
@@ -61,15 +87,7 @@ function JFrame(props) {
 
    function handleSubmit(event) {
       event.preventDefault();
-      if(searchText) {
-         chrome.runtime.sendMessage(searchText, function(response) {
-            let result = getObjectsFromHTML(response);
-            // console.log(result[0]);
-            setSearchResults(result[0]);
-            setResultCountText(result[1]);
-            setLastSearchedText(searchText);
-         });
-      }
+      searchUsingText(searchText);
    };
 
    function getSearchResults() {
@@ -78,12 +96,12 @@ function JFrame(props) {
       }
 
       if(searchResults.length > 0) {
-         return searchResults.map(entry =>
+         return searchResults.map((entry, index) =>
             <DictEntry
                furigana={entry.furigana}
                chars={entry.chars}
                defs={entry.defs}
-               key={entry.chars}
+               key={index}
             />
          );
 
@@ -117,7 +135,9 @@ function JFrame(props) {
                      onChange={e => setSearchText(e.target.value)} 
                      autoComplete="off" 
                      spellCheck="false" 
-                     placeholder="Search Jisho">
+                     placeholder="Search Jisho"
+                     ref={searchbarRef}
+                  >
                   </input>
                   <button id="jf-submit-btn" type="submit">
                      <div>🔍︎</div>

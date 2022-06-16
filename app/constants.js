@@ -1,4 +1,8 @@
 const Constants = {
+   TYPE_SIGNAL_READY: 0,
+   TYPE_SEARCH_FETCH: 1,
+   TYPE_SEARCH_CONTEXT: 2,
+   
    DEFAULT_DEF: 0,
    WIKIPEDIA_DEF: 1,
    OTHERS_DEF: 2,
