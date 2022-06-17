@@ -37,8 +37,10 @@ function JFrame(props) {
       searchbarRef.current.focus();
 
       chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
-         setSearchText(response);
-         searchUsingText(response);
+         if(response) {
+            setSearchText(response);
+            searchUsingText(response);
+         }
       });
 
       chrome.runtime.onMessage.addListener(request => {
@@ -68,7 +70,7 @@ function JFrame(props) {
    }, []);
 
    function searchUsingText(text) {
-      if(text.length) {
+      if(text) {
          chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text}, (response) => {
             let result = getObjectsFromHTML(response);
             // console.log(result[0]);

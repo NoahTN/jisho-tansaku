@@ -1,6 +1,6 @@
 import Constants from "./constants"
 
-let selectionText = "";
+let textToSearch = "";
 
 chrome.runtime.onInstalled.addListener(function() {
    chrome.contextMenus.create({
@@ -11,12 +11,12 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-   if(selectionText) {
+   if(textToSearch) {
       console.log(info.selectionText);
       chrome.tabs.sendMessage(tab.id, {type: Constants.TYPE_SEARCH_CONTEXT, data: info.selectionText});
    }
-   selectionText = info.selectionText;
    if (info.menuItemId === "my-menu") {
+      textToSearch = info.selectionText;
       chrome.scripting.executeScript({
          target: { tabId: tab.id },
          files: ["content.js"]
@@ -32,6 +32,7 @@ chrome.action.onClicked.addListener((tab) => {
  });
 
  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+   textToSearch = request.data;
    if(request.type === Constants.TYPE_SEARCH_FETCH) {
       let input = request.data;
       fetch("https://jisho.org/search/"+input)
@@ -41,8 +42,8 @@ chrome.action.onClicked.addListener((tab) => {
          });
       return true;
    }
-   else if(request.type === Constants.TYPE_SIGNAL_READY) {
-      sendResponse(selectionText);
+   else if(request.type === Constants.TYPE_SIGNAL_READY && textToSearch) {
+      sendResponse(textToSearch);
       return true;
    }
  });
