@@ -41,7 +41,6 @@ chrome.action.onClicked.addListener((tab) => {
          .then((text) => {
             sendResponse(text);
          });
-      return true;
    }
    else if(request.type === Constants.TYPE_SIGNAL_READY) {
       if(tabAndTextMap[sender.tab.id]) {
@@ -51,4 +50,5 @@ chrome.action.onClicked.addListener((tab) => {
          sendResponse("");
       }
    }
+   return true;
  });

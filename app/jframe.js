@@ -48,6 +48,7 @@ function JFrame(props) {
             setSearchText(request.data);
             searchUsingText(request.data);
          }
+         sendResponse(true);
          return true;
       });
 
