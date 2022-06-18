@@ -2,7 +2,7 @@ import React from 'react';
 import getObjectsFromHTML from './parser';
 import Constants from './constants';
 import Draggable from 'react-draggable';
-
+// TODO: Fix empty results parsing
 function JFrame(props) {
    const jFrameRef = React.useRef();
    const searchbarRef = React.useRef();
@@ -43,11 +43,12 @@ function JFrame(props) {
          }
       });
 
-      chrome.runtime.onMessage.addListener(request => {
+      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
          if (request.type === Constants.TYPE_SEARCH_CONTEXT) {
             setSearchText(request.data);
             searchUsingText(request.data);
          }
+         return true;
       });
 
       window.addEventListener('resize', onWindowResize);

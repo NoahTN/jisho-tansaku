@@ -1,6 +1,6 @@
 import Constants from "./constants"
 
-let textToSearch = "";
+const tabAndTextMap = {};
 
 chrome.runtime.onInstalled.addListener(function() {
    chrome.contextMenus.create({
@@ -11,39 +11,44 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-   if(textToSearch) {
-      console.log(info.selectionText);
-      chrome.tabs.sendMessage(tab.id, {type: Constants.TYPE_SEARCH_CONTEXT, data: info.selectionText});
-   }
    if (info.menuItemId === "my-menu") {
-      textToSearch = info.selectionText;
+      // Calling context menu when already activated
+      if(tab.id in tabAndTextMap && info.selectionText) {
+         console.log(info.selectionText);
+         chrome.tabs.sendMessage(tab.id, {type: Constants.TYPE_SEARCH_CONTEXT, data: info.selectionText});
+      }
+      tabAndTextMap[tab.id] = info.selectionText;
       chrome.scripting.executeScript({
-         target: { tabId: tab.id },
+         target: {tabId: tab.id},
          files: ["content.js"]
       });
    }
 });
 
 chrome.action.onClicked.addListener((tab) => {
+   tabAndTextMap[tab.id] = "";
    chrome.scripting.executeScript({
-     target: { tabId: tab.id },
+     target: {tabId: tab.id},
      files: ["content.js"]
    });
  });
 
  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-   textToSearch = request.data;
    if(request.type === Constants.TYPE_SEARCH_FETCH) {
-      let input = request.data;
-      fetch("https://jisho.org/search/"+input)
+      tabAndTextMap[sender.tab.id] = request.data;
+      fetch("https://jisho.org/search/"+tabAndTextMap[sender.tab.id])
          .then((res) => res.text())
          .then((text) => {
             sendResponse(text);
          });
       return true;
    }
-   else if(request.type === Constants.TYPE_SIGNAL_READY && textToSearch) {
-      sendResponse(textToSearch);
-      return true;
+   else if(request.type === Constants.TYPE_SIGNAL_READY) {
+      if(tabAndTextMap[sender.tab.id]) {
+         sendResponse(tabAndTextMap[sender.tab.id]);
+      }
+      else {
+         sendResponse("");
+      }
    }
  });
