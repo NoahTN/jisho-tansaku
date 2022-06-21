@@ -5,8 +5,8 @@ function getObjectsFromHTML(rawHTML) {
    const root = parse(rawHTML);
    const entries = [];
    root.set_content(root.querySelector("#primary"));
-   const countText = root.querySelector(".result_count").text;
-   let content = root.querySelectorAll("[class='concept_light clearfix']");
+   const countText = root.querySelector(".result_count")?.text;
+   const content = root.querySelectorAll("[class='concept_light clearfix']");
    // console.log(content);
    for(const entry of content) {
       entries.push({

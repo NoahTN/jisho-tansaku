@@ -2,7 +2,9 @@ import React from 'react';
 import getObjectsFromHTML from './parser';
 import Constants from './constants';
 import Draggable from 'react-draggable';
-// TODO: Fix empty results parsing
+import { throttle } from './common-functions';
+// TODO: loading symbol, scroll to top when searching, multiple pages, wikipedia expanding, behaviour with regex (ex. wild cards)
+
 function JFrame(props) {
    const jFrameRef = React.useRef();
    const searchbarRef = React.useRef();
@@ -12,28 +14,20 @@ function JFrame(props) {
    const [resultCountText, setResultCountText] = React.useState("");
    const [posAndBounds, dispatch] = React.useReducer((state, action) => {
       switch(action.type) {
-         case Constants.ACTION_WINDOW_RESIZE:
+         case Constants.ACTION_UPDATE:
             return {
-               top: document.documentElement.clientHeight/2 - jFrameRef.current.offsetHeight/2,
-               left: document.documentElement.clientWidth/2 - jFrameRef.current.offsetWidth/2,
-               leftBounds: -document.documentElement.clientWidth/2 + jFrameRef.current.offsetWidth/2,
-               rightBounds:document.documentElement.clientWidth/2 - jFrameRef.current.offsetWidth/2
+               bottomBounds: document.documentElement.clientHeight - jFrameRef.current.offsetHeight,
+               rightBounds:document.documentElement.clientWidth - jFrameRef.current.offsetWidth
             };
-         case Constants.ACTION_JFRAME_RESIZE:
-            return {...state};
          default:
             throw new Error();
       }
    }, {
-      top: document.documentElement.clientHeight/2 - props.height/2,
-      left: document.documentElement.clientWidth/2 - props.width/2,
-      leftBounds: -document.documentElement.clientWidth/2 + props.width/2,
-      rightBounds: document.documentElement.clientWidth/2 - props.width/2
+      bottomBounds: document.documentElement.clientHeight - props.height,
+      rightBounds: document.documentElement.clientWidth - props.width
    });
 
    React.useEffect(() => {
-      // jFrameRef.current.style.top = posAndBounds.top+"px";
-      // jFrameRef.current.style.left = posAndBounds.left+"px";
       searchbarRef.current.focus();
 
       chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
@@ -53,18 +47,13 @@ function JFrame(props) {
       });
 
       window.addEventListener('resize', onWindowResize);
-      // new ResizeObserver(() => {
-      //    console.log({
-      //       width: jfContent.offsetWidth,
-      //       height: jfContent.offsetHeight
-      //    })
-      //    setLeftBounds(-document.documentElement.clientWidth/2 + jfContent.offsetWidth/2);
-      //    setRightBounds(document.documentElement.clientWidth/2 - jfContent.offsetWidth/2);
-      //    jFrameRef.current.style.top = pos.x;
-      //    jFrameRef.current.style.left = pos.y
-      //    jFrameRef.current.style.maxWidth = `${ + "px"}`
-      //    jFrameRef.current.style.maxHeight = `${ + "px"}`
-      // }).observe(jFrameRef.current);
+
+      new ResizeObserver(throttle(() => {
+         if(jFrameRef.current.offsetWidth) {
+            chrome.storage.sync.set({width: jFrameRef.current.offsetWidth, height: jFrameRef.current.offsetHeight});
+         }
+         dispatch({type: Constants.ACTION_UPDATE});
+      }, 250)).observe(jFrameRef.current);
 
       // return () => {
       //    window.removeEventListener('resize', onWindowResize);
@@ -76,17 +65,17 @@ function JFrame(props) {
          chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text}, (response) => {
             let result = getObjectsFromHTML(response);
             // console.log(result[0]);
-            setSearchResults(result[0]);
-            setResultCountText(result[1]);
+            if(result[1]) {
+               setSearchResults(result[0]);
+               setResultCountText(result[1]);
+            }
             setLastSearchedText(text);
          });
       }
    }
 
    function onWindowResize() {
-      // setLeftBounds(-document.documentElement.clientWidth/2 + jfContent.offsetWidth/2);
-      // setRightBounds(document.documentElement.clientWidth/2 - jfContent.offsetWidth/2);
-      dispatch({type: Constants.ACTION_WINDOW_RESIZE});
+      dispatch({type: Constants.ACTION_UPDATE});
    };
 
    function handleSubmit(event) {
@@ -112,24 +101,27 @@ function JFrame(props) {
       }
 
       return <div>
-         Sorry, couldn't find anything matching {lastSearchedText}
+         Sorry, couldn't find anything matching {lastSearchedText}.
       </div>;
+   }
+
+   function handleDragStop(e, data) {
+      chrome.storage.sync.set({x: data.x, y: data.y});
    }
 
    return (
       <Draggable 
          handle=".drag-handle" 
-         // bounds="body"
-         
          bounds={{
-            top: -document.documentElement.clientHeight/2 + 500/2, 
-            left: posAndBounds.leftBounds, 
+            top: 0, 
+            left: 0, 
             right: posAndBounds.rightBounds, 
-            bottom: document.documentElement.clientHeight/2 - 500/2
+            bottom: posAndBounds.bottomBounds
          }}
-         // defaultPosition={{x: document.documentElement.clientHeight/2 - 650/2, y: document.documentElement.scrollTop + document.documentElement.clientHeight/2 - 500/2}}
+         defaultPosition={{x: props.defaultX, y: props.defaultY}}
+         onStop={handleDragStop}
       >
-         <div id="jf-content" ref={jFrameRef} style={{top: posAndBounds.top+"px", left: posAndBounds.left+"px"}}>
+         <div id="jf-content" ref={jFrameRef} style={{width: props.width+"px", height: props.height+"px"}}>
             <div className="drag-handle"></div>
             <form id="jf-form" onSubmit={handleSubmit}>
                <div id="jf-form-inner">

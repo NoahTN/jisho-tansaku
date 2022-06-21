@@ -7,7 +7,10 @@
 .drag-handle {
    background-color: #69D838;
    height: 0.75em;
+   position: sticky;
+   top: 0;
    cursor: move;
+   z-index: 99999;
 }
 
 #jf-content {
@@ -25,8 +28,8 @@
    resize: both;
    overflow: auto;
    text-align: left;
-   width: 650px;
-   height: 500px;
+   min-width: 100px;
+   min-height:100px;
 }
 
 #jf-content > h4 {
@@ -51,6 +54,9 @@
    padding: 4px;
    width: 100%;
    box-sizing: border-box;
+   position: sticky;
+   top: 0.75em;
+   z-index: 99999;
 }
 
 #jf-form-inner {
@@ -97,6 +103,11 @@
 
 #jf-results {
    margin-top: .5em;
+}
+
+#jf-no-match {
+   font-size: 1.25em;
+   margin-left: 0.5em;
 }
 
 
