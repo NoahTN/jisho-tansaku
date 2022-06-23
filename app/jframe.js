@@ -26,6 +26,7 @@ function JFrame(props) {
       bottomBounds: document.documentElement.clientHeight - props.height,
       rightBounds: document.documentElement.clientWidth - props.width
    });
+   let prevDocHeight = document.documentElement.clientHeight;
 
    React.useEffect(() => {
       searchbarRef.current.focus();
@@ -75,6 +76,12 @@ function JFrame(props) {
    }
 
    function onWindowResize() {
+      if(document.documentElement.clientHeight !== prevDocHeight && jFrameRef.current.offsetHeight) {
+         chrome.storage.sync.get("y", (data) => {
+            jFrameRef.current.style.height = Math.min(document.documentElement.clientHeight, jFrameRef.current.offsetHeight+data.y)+"px";
+         });
+         prevDocHeight = document.documentElement.clientHeight;
+      }
       dispatch({type: Constants.ACTION_UPDATE});
    };
 
