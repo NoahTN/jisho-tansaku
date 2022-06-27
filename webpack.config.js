@@ -1,47 +1,22 @@
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
-const baseManifest = require("./chrome/manifest.json");
-const WebpackExtensionManifestPlugin = require("webpack-extension-manifest-plugin");
-const config = {
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+module.exports = {
    mode: "development",
-   devtool: "cheap-module-source-map",
+   devtool: 'cheap-module-source-map',
    entry: {
-      app: path.join(__dirname, "./static/index.js"),
-      background: path.join(__dirname, "./app/background.js"),
-      content: path.join(__dirname, "./app/content.js"),
+      background: "./src/background.js",
+      content: "./src/content.js",
    },
    output: {
-      path: path.resolve(__dirname, "./build"),
+      path: path.resolve(__dirname, "build"),
       filename: "[name].js",
-      publicPath: "",
       clean: true
    },
-   resolve: {
-      extensions: ["*", ".js"]
-   },
    plugins: [
-      new HtmlWebpackPlugin({
-         title: "jisho-tansaku",
-         meta: {
-            charset: "utf-8",
-            viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
-            "theme-color": "#000000"
-         },
-         manifest: "manifest.json",
-         filename: "index.html",
-         chunks: ["app"],
-         template: "./static/index.html"
-      }),
-      new CopyPlugin({
+      new CopyWebpackPlugin({
          patterns: [
-            { from: "chrome/images", to: "images" },
+            {from: "chrome"},
          ]
-      }),
-      new WebpackExtensionManifestPlugin({
-         config: {
-            base: baseManifest
-         }
       }),
    ],
    module: {
@@ -62,4 +37,3 @@ const config = {
       ]
    },
 };
-module.exports = config;

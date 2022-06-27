@@ -125,7 +125,7 @@ function JFrame(props) {
             right: posAndBounds.rightBounds, 
             bottom: posAndBounds.bottomBounds
          }}
-         defaultPosition={{x: props.defaultX, y: props.defaultY}}
+         defaultPosition={{x: props.defaultX+props.width <= document.documentElement.clienWidth ? props.defaultX : document.documentElement.clientWidth-props.width, y: props.defaultY}}
          onStop={handleDragStop}
       >
          <div id="jf-content" ref={jFrameRef} style={{width: props.width+"px", height: props.height+"px"}}>
