@@ -1,7 +1,7 @@
 #jframe {
    position: fixed;
    top:0;
-   z-index: 99999;
+   z-index: 2147483647;
 }
 
 .drag-handle {
@@ -10,7 +10,7 @@
    position: sticky;
    top: 0;
    cursor: move;
-   z-index: 99999;
+   z-index: 2;
 }
 
 #jf-content {

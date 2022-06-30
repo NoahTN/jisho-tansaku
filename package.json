@@ -16,7 +16,7 @@
     "@babel/core": "^7.17.5",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
-    "@types/chrome": "^0.0.179",
+    "@types/chrome": "^0.0.191",
     "babel-loader": "^8.2.3",
     "babel-plugin-styled-components": "^2.0.6",
     "copy-webpack-plugin": "^10.2.4",

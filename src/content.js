@@ -19,7 +19,7 @@ if(target === null) {
          }
       });
 
-      ReactDOM.render(jframe, target, () => {});
+      ReactDOM.render(jframe, target);
    });
 }
 else {
