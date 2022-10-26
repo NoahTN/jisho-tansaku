@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useRef, useState, useReducer, Fragment } from 'react';
 import getObjectsFromHTML from './parser';
 import Constants from './constants';
 import Draggable from 'react-draggable';
@@ -6,13 +6,14 @@ import { throttle } from './common-functions';
 // TODO: loading symbol, scroll to top when searching, multiple pages, wikipedia expanding, behaviour with regex (ex. wild cards)
 
 function JFrame(props) {
-   const jFrameRef = React.useRef();
-   const searchbarRef = React.useRef();
-   const [searchText, setSearchText] = React.useState("");
-   const [lastSearchedText, setLastSearchedText] = React.useState("");
-   const [searchResults, setSearchResults] = React.useState([]);
-   const [resultCountText, setResultCountText] = React.useState("");
-   const [posAndBounds, dispatch] = React.useReducer((state, action) => {
+   const jFrameRef = useRef();
+   const searchbarRef = useRef();
+   const [searchText, setSearchText] =useState("");
+   const [lastSearchedText, setLastSearchedText] = useState("");
+   const [searchResults, setSearchResults] = useState([]);
+   const [resultCountText, setResultCountText] = useState("");
+   const [furthestPage, setFurthestPage] = useState(0);
+   const [posAndBounds, dispatch] = useReducer((state, action) => {
       switch(action.type) {
          case Constants.ACTION_UPDATE:
             return {
@@ -28,7 +29,7 @@ function JFrame(props) {
    });
    let prevDocHeight = document.documentElement.clientHeight;
 
-   React.useEffect(() => {
+   useEffect(() => {
       searchbarRef.current.focus();
 
       chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
@@ -47,7 +48,8 @@ function JFrame(props) {
          return true;
       });
 
-      window.addEventListener('resize', onWindowResize);
+      window.addEventListener("resize", onWindowResize);
+      jFrameRef.current.addEventListener("scroll", onJFrameScroll);
 
       new ResizeObserver(throttle(() => {
          if(jFrameRef.current.offsetWidth) {
@@ -63,14 +65,18 @@ function JFrame(props) {
 
    function searchUsingText(text) {
       if(text) {
-         chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text}, (response) => {
+         const page = text === lastSearchedText ? (furthestPage+1) : 0;
+         chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text, page: page}, (response) => {
             let result = getObjectsFromHTML(response);
-            // console.log(result[0]);
-            if(result[1]) {
-               setSearchResults(result[0]);
-               setResultCountText(result[1]);
+            if(page > 0) {
+
             }
-            setLastSearchedText(text);
+            else {
+               setSearchResults(result[0]);
+               setResultCountText(result[1] ? result[1] : "");
+               setFurthestPage(page);
+               setLastSearchedText(text);
+            }
          });
       }
    }
@@ -85,32 +91,17 @@ function JFrame(props) {
       dispatch({type: Constants.ACTION_UPDATE});
    };
 
+   function onJFrameScroll(event) {
+         const element = event.target;
+         if(element.scrollHeight - element.scrollTop, element.clientHeight) {
+            // load new page
+         }
+   }
+
    function handleSubmit(event) {
       event.preventDefault();
       searchUsingText(searchText);
    };
-
-   function getSearchResults() {
-      if(!lastSearchedText) {
-         return;
-      }
-
-      if(searchResults.length > 0) {
-         return searchResults.map((entry, index) =>
-            <DictEntry
-               furigana={entry.furigana}
-               chars={entry.chars}
-               defs={entry.defs}
-               key={index}
-            />
-         );
-
-      }
-
-      return <div>
-         Sorry, couldn't find anything matching {lastSearchedText}.
-      </div>;
-   }
 
    function handleDragStop(e, data) {
       chrome.storage.sync.set({x: data.x, y: data.y});
@@ -126,11 +117,11 @@ function JFrame(props) {
             bottom: posAndBounds.bottomBounds
          }}
          defaultPosition={{x: props.defaultX+props.width <= document.documentElement.clienWidth ? props.defaultX : document.documentElement.clientWidth-props.width, y: props.defaultY}}
-         onStop={handleDragStop}
+         onStop={ handleDragStop }
       >
-         <div id="jf-content" ref={jFrameRef} style={{width: props.width+"px", height: props.height+"px"}}>
+         <div id="jf-content" ref={ jFrameRef } style={{width: props.width+"px", height: props.height+"px"}}>
             <div className="drag-handle"></div>
-            <form id="jf-form" onSubmit={handleSubmit}>
+            <form id="jf-form" onSubmit={ handleSubmit }>
                <div id="jf-form-inner">
                   <input id="jf-searchbar" 
                      type="text" 
@@ -139,7 +130,7 @@ function JFrame(props) {
                      autoComplete="off" 
                      spellCheck="false" 
                      placeholder="Search Jisho"
-                     ref={searchbarRef}
+                     ref={ searchbarRef }
                   >
                   </input>
                   <button id="jf-submit-btn" type="submit">
@@ -150,11 +141,22 @@ function JFrame(props) {
             {resultCountText.length > 0 &&
                <h4>
                   Words
-                  <span>{resultCountText}</span>
+                  <span>{ resultCountText }</span>
                </h4>
             }
-            <div id="jf-results">
-               { getSearchResults() }
+            <div id="jf-results">{ 
+               lastSearchedText && (searchResults.length ? 
+                  searchResults.map((entry, index) =>
+                     <DictEntry
+                        furigana={entry.furigana}
+                        chars={entry.chars}
+                        defs={entry.defs}
+                        key={index}
+                     />
+                  ) : <div>
+                     Sorry, couldn't find anything matching {lastSearchedText}.
+                  </div>
+               )}
             </div>
          </div>   
       </Draggable>
@@ -175,7 +177,7 @@ function DictEntry(props) {
          <div className={"jf-defs" + (props.chars.length > 5 ? " jf-defs-long" : "")}>
             {props.defs.map((def, index) => {
                return (
-                  <React.Fragment key={index}>
+                  <Fragment key={index}>
                      <div className="jf-tag">{def.tag}</div>
                      <div className="jf-def">
                         {(() => {
@@ -203,7 +205,7 @@ function DictEntry(props) {
                         }
                         )()}
                      </div>
-                  </React.Fragment>
+                  </Fragment>
                );
             })}
          </div>
