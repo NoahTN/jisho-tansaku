@@ -28,5 +28,11 @@
   },
   "host_permissions": [
     "https://jisho.org/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.google.com/*"],
+      "js": ["content.js"]
+    }
   ]
 }

@@ -28,9 +28,6 @@ test("example test", async ({ page, context }) => {
    let [background] = context.serviceWorkers();
    if (!background)
       background = await context.waitForEvent("serviceworker");
-
-   await background.evaluate(() => {
-      chrome.action.openPopup(); // Add arguments as needed
-   });
+   await page.goto("https://www.google.com");
    await expect(page.locator("#jframe")).toHaveCount(1);
 });
