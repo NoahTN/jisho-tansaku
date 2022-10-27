@@ -18,16 +18,32 @@ export const test = base.extend({
       let [background] = context.serviceWorkers();
       if (!background)
          background = await context.waitForEvent("serviceworker");
-
       const extensionId = background.url().split("/")[2];
       await use(extensionId);
    }
 });
 
-test("example test", async ({ page, context }) => {
-   let [background] = context.serviceWorkers();
-   if (!background)
-      background = await context.waitForEvent("serviceworker");
-   await page.goto("https://www.google.com");
-   await expect(page.locator("#jframe")).toHaveCount(1);
+test.describe("main", () => {
+   test.beforeEach(async ({ page, context }) => {
+      let [background] = context.serviceWorkers();
+      if (!background)
+         background = await context.waitForEvent("serviceworker");
+      await page.goto("https://www.google.com");
+   });
+
+   test("content script injects into page", async ({ page }) => {
+      await expect(page.locator("#jframe")).toHaveCount(1);
+   });
+
+   test("scrolls to bottom", async ({ page }) => {
+      let jframe = page.locator("#jf-content");
+      let scrollHeight = await jframe.evaluate(content => content.scrollHeight);
+      let scrollTop = await jframe.evaluate((content, scrollHeight) => {
+         content.scrollTo(0, scrollHeight);
+         return content.scrollTop;
+      }, scrollHeight);
+
+      expect(scrollTop).toBeCloseTo(scrollHeight-500);
+   });
 });
+
