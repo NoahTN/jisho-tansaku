@@ -5,6 +5,10 @@ const CopyPlugin = require("copy-webpack-plugin");
 function modify(buffer) {
    let manifest = JSON.parse(buffer.toString());
    manifest.version = package.version;
+   manifest.content_scripts = [{
+        "matches": ["https://www.google.com/*"],
+        "js": ["content.js"]
+   }];
    return JSON.stringify(manifest, null, 2);
 }
 
@@ -31,7 +35,7 @@ module.exports = {
                }
             }
          ]
-      })
+      }),
    ],
    module: {
       rules: [
@@ -50,4 +54,4 @@ module.exports = {
          },
       ]
    },
-};
+}

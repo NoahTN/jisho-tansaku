@@ -13,4 +13,4 @@ const Constants = {
    ACTION_JFRAME_MOVE: 12
 }
 
-export default Constants
+export default Constants;
