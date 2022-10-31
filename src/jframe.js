@@ -8,11 +8,12 @@ import { throttle } from './common-functions';
 function JFrame(props) {
    const jFrameRef = useRef();
    const searchbarRef = useRef();
-   const [searchText, setSearchText] =useState("");
-   const [lastSearchedText, setLastSearchedText] = useState("");
-   const [searchResults, setSearchResults] = useState([]);
+   const furthestPage = useRef(-1);
+   const isLastPage = useRef();
+   const lastSearchedText = useRef();
+   const [searchText, setSearchText] = useState("");
+   const [searchResults, setSearchResults] = useState();
    const [resultCountText, setResultCountText] = useState("");
-   const [furthestPage, setFurthestPage] = useState(0);
    const [posAndBounds, dispatch] = useReducer((state, action) => {
       switch(action.type) {
          case Constants.ACTION_UPDATE:
@@ -30,6 +31,13 @@ function JFrame(props) {
    let prevDocHeight = document.documentElement.clientHeight;
 
    useEffect(() => {
+      function onJFrameScroll(event) {
+         const element = event.target;
+         if(element.scrollHeight - element.scrollTop === element.clientHeight) {
+            searchUsingText(searchbarRef.current.value);
+         }
+      }
+
       searchbarRef.current.focus();
 
       chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
@@ -51,32 +59,42 @@ function JFrame(props) {
       window.addEventListener("resize", onWindowResize);
       jFrameRef.current.addEventListener("scroll", onJFrameScroll);
 
-      new ResizeObserver(throttle(() => {
+      let resizeObserver = new ResizeObserver(throttle(() => {
          if(jFrameRef.current.offsetWidth) {
             chrome.storage.sync.set({width: jFrameRef.current.offsetWidth, height: jFrameRef.current.offsetHeight});
          }
          dispatch({type: Constants.ACTION_UPDATE});
-      }, 250)).observe(jFrameRef.current);
+      }, 250));
+      resizeObserver.observe(jFrameRef.current);
 
-      // return () => {
-      //    window.removeEventListener('resize', onWindowResize);
-      // };
+      return () => {
+         resizeObserver.disconnect();
+      };
    }, []);
 
-   function searchUsingText(text) {
-      if(text) {
-         const page = text === lastSearchedText ? (furthestPage+1) : 0;
-         chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text, page: page}, (response) => {
-            let result = getObjectsFromHTML(response);
-            if(page > 0) {
+   useEffect(() => {
+      lastSearchedText.current = searchText;
+   }, [searchResults])
 
+   function searchUsingText(text) {
+      const repeatedSearch = (text === lastSearchedText.current);
+      if(repeatedSearch && isLastPage.current) {
+         return;
+      }
+      if(text) {
+         const page = repeatedSearch ? (furthestPage.current+1) : 0;
+         chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text, page: (page+1)}, (response) => {
+            const result = getObjectsFromHTML(response);
+            if(page > 0) {
+               setSearchResults(prev => [...prev].concat(result[0]));
             }
             else {
                setSearchResults(result[0]);
                setResultCountText(result[1] ? result[1] : "");
-               setFurthestPage(page);
-               setLastSearchedText(text);
+               lastSearchedText.current = text;
             }
+            furthestPage.current = page;
+            isLastPage.current = result[1] ? false : true;
          });
       }
    }
@@ -90,13 +108,6 @@ function JFrame(props) {
       }
       dispatch({type: Constants.ACTION_UPDATE});
    };
-
-   function onJFrameScroll(event) {
-         const element = event.target;
-         if(element.scrollHeight - element.scrollTop, element.clientHeight) {
-            // load new page
-         }
-   }
 
    function handleSubmit(event) {
       event.preventDefault();
@@ -145,16 +156,16 @@ function JFrame(props) {
                </h4>
             }
             <div id="jf-results">{ 
-               lastSearchedText && (searchResults.length ? 
+               lastSearchedText.current && (searchResults.length ? 
                   searchResults.map((entry, index) =>
                      <DictEntry
-                        furigana={entry.furigana}
-                        chars={entry.chars}
-                        defs={entry.defs}
-                        key={index}
+                        furigana={ entry.furigana }
+                        chars={ entry.chars }
+                        defs={ entry.defs }
+                        key={ index }
                      />
                   ) : <div>
-                     Sorry, couldn't find anything matching {lastSearchedText}.
+                     Sorry, couldn't find anything matching { lastSearchedText.current }.
                   </div>
                )}
             </div>

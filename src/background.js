@@ -36,7 +36,8 @@ chrome.action.onClicked.addListener((tab) => {
  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
    if(request.type === Constants.TYPE_SEARCH_FETCH) {
       tabAndTextMap[sender.tab.id] = request.data;
-      fetch("https://jisho.org/search/"+tabAndTextMap[sender.tab.id])
+      console.log("https://jisho.org/search/"+tabAndTextMap[sender.tab.id]+(request.page ? ("%20%23words?page="+request.page) : ""));
+      fetch("https://jisho.org/search/"+tabAndTextMap[sender.tab.id]+(request.page ? ("%20%23words?page="+request.page) : ""))
          .then((res) => res.text())
          .then((text) => {
             sendResponse(text);
