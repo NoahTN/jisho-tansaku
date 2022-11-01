@@ -1,10 +1,9 @@
 import { parse } from "node-html-parser";
 import Constants from "./constants";
 
-function getObjectsFromHTML(rawHTML) {
+export function getObjectsFromHTML(rawHTML) {
    const root = parse(rawHTML);
    const entries = [];
-   root.set_content(root.querySelector("#primary"));
    const countText = root.querySelector(".result_count")?.text;
    const content = root.querySelectorAll("[class='concept_light clearfix']");
    // console.log(content);
@@ -80,4 +79,14 @@ function parseDefs(nodes) {
    return result;
 }
 
-export default getObjectsFromHTML;
+export function parseWikipediaDef(rawHTML) {
+   const root = parse(rawHTML);
+   const abstract = root.querySelector(".meaning-abstract");
+   const result = [abstract.childNodes[0].textContent];
+   for(let i = 2; i < abstract.childNodes.length; i+=2) {
+      result.push(<br key={ i-1 }></br>);
+      result.push(<a href={ abstract.childNodes[i].attributes.href } key={ i } target="_blank" rel="noopener noreferrer">{ abstract.childNodes[i].textContent } </a>)
+   }
+
+   return result;
+}

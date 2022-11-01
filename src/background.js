@@ -34,22 +34,26 @@ chrome.action.onClicked.addListener((tab) => {
  });
 
  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-   if(request.type === Constants.TYPE_SEARCH_FETCH) {
-      tabAndTextMap[sender.tab.id] = request.data;
-      console.log("https://jisho.org/search/"+tabAndTextMap[sender.tab.id]+(request.page ? ("%20%23words?page="+request.page) : ""));
-      fetch("https://jisho.org/search/"+tabAndTextMap[sender.tab.id]+(request.page ? ("%20%23words?page="+request.page) : ""))
-         .then((res) => res.text())
-         .then((text) => {
+   switch(request.type) {
+      case Constants.TYPE_SEARCH_FETCH:
+         tabAndTextMap[sender.tab.id] = request.data;
+         fetch("https://jisho.org/search/"+tabAndTextMap[sender.tab.id]+(request.page ? ("%20%23words?page="+request.page) : ""))
+            .then(res => res.text())
+            .then(text => {
+               sendResponse(text);
+            });
+         break;
+      case Constants.TYPE_READ_MORE:
+         fetch(request.url)
+         .then(res => res.text())
+         .then(text => {
             sendResponse(text);
          });
-   }
-   else if(request.type === Constants.TYPE_SIGNAL_READY) {
-      if(tabAndTextMap[sender.tab.id]) {
-         sendResponse(tabAndTextMap[sender.tab.id]);
-      }
-      else {
-         sendResponse("");
-      }
+         break;
+      case Constants.TYPE_SIGNAL_READY:
+         sendResponse(tabAndTextMap[sender.tab.id] || "");
+         break;
+
    }
    return true;
  });
