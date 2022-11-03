@@ -53,8 +53,15 @@ test.describe("main", () => {
       expect(scrollTop).toBeCloseTo(scrollHeight-500);
    });
 
-   test.skip("searches 'test', scrolls to bottom and loads more results", async ({ page }) => {
+   test.skip("searches invalid text 'dasdasd' and displays that no results were found", async ({ page }) => {
       const jframe = page.locator("#jf-content");;
+      await jframe.locator("#jf-searchbar").fill("dasdasd");
+      await jframe.locator("#jf-submit-btn").click();
+      await expect(jframe.locator("#jf-no-results")).toHaveText("Sorry, couldn't find anything matching dasdasd.");
+   });
+
+   test.skip("searches 'test', scrolls to bottom and loads more results", async ({ page }) => {
+      const jframe = page.locator("#jf-content");
       await jframe.locator("#jf-searchbar").fill("test");
       await jframe.locator("#jf-submit-btn").click();
       await page.waitForFunction(() => {
@@ -67,7 +74,7 @@ test.describe("main", () => {
       await expect(jframe.locator(".jf-entry")).toHaveCount(40);
    });
 
-   test("searches 'cake', clicks on 'Read more' and displays wikipedia defintiion", async ({ page }) => {
+   test.skip("searches 'cake', clicks on 'Read more' and displays wikipedia defintiion", async ({ page }) => {
       const jframe = page.locator("#jf-content");
       const abstract = jframe.locator("#jf-results .jf-def-abs >> nth=0");
       await jframe.locator("#jf-searchbar").fill("cake");

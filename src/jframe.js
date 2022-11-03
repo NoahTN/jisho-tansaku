@@ -12,7 +12,7 @@ function JFrame(props) {
    const isLastPage = useRef();
    const lastSearchedText = useRef();
    const [searchText, setSearchText] = useState("");
-   const [searchResults, setSearchResults] = useState();
+   const [searchResults, setSearchResults] = useState([]);
    const [resultCountText, setResultCountText] = useState("");
    const [posAndBounds, dispatch] = useReducer((state, action) => {
       switch(action.type) {
@@ -83,6 +83,7 @@ function JFrame(props) {
       }
       if(text) {
          const page = repeatedSearch ? (furthestPage.current+1) : 0;
+         lastSearchedText.current = text;
          chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text, page: (page+1)}, (response) => {
             const result = getObjectsFromHTML(response);
             if(page > 0) {
@@ -91,7 +92,6 @@ function JFrame(props) {
             else {
                setSearchResults(result[0]);
                setResultCountText(result[1] ? result[1] : "");
-               lastSearchedText.current = text;
             }
             furthestPage.current = page;
             isLastPage.current = result[1] ? false : true;
@@ -164,7 +164,7 @@ function JFrame(props) {
                         defs={ entry.defs }
                         key={ index }
                      />
-                  ) : <div>
+                  ) : <div id="jf-no-results">
                      Sorry, couldn't find anything matching { lastSearchedText.current }.
                   </div>
                )}
@@ -192,7 +192,6 @@ function DictEntry(props) {
    function handleReadMoreClick(event) {
       event.preventDefault();
       chrome.runtime.sendMessage({type: Constants.TYPE_READ_MORE, url: event.target.href}, (response) => {
-         console.log(parseWikipediaDef(response));
          setWikiDef(parseWikipediaDef(response));
       });
    }

@@ -14,44 +14,45 @@
 }
 
 #jf-content {
-   font-family: Helvetica, Arial, sans-serif;
+   font-family: Helvetica, Arial, sans-serif !important;
    position: absolute;
    box-shadow: 0px 0px 5px;
    border-radius: 5px;
    background: #fff;
    color: #222;
-   font-style: normal;
-   font-weight: normal;
-   line-height: 1.5;
+   font-style: normal !important;
+   font-weight: normal !important;
+   font-size: 12px;
+   line-height: 1.5em;
    margin: 0;
    padding: 0;
    resize: both;
    overflow: auto;
    text-align: left;
    min-width: 100px;
-   min-height:100px;
+   min-height: 100px;
 }
 
 #jf-content > h4 {
-   padding-left: 12px;
-   margin-bottom: 0.5rem;
-   margin-top: 0.2rem;
-   line-height: 1.4;
-   font-size: 23px;
+   padding-left: 0.6em;
+   margin-bottom: 0.25em;
+   margin-top: 0.2em;
+   line-height: 1.4em;
+   font-size: 1.4em;
    font-weight: bold;
    color: #222;
 }
 
 #jf-content > h4 > span {
    font-weight: normal;
-   font-size: 18px;
+   font-size: 1.3em;
    color: #666;
 }
 
 #jf-form {
    background-color: #ddd;
    border-radius: 5px;
-   padding: 4px;
+   padding: 0.3em;
    width: 100%;
    box-sizing: border-box;
    position: sticky;
@@ -63,7 +64,6 @@
    width: 100%;
    border-radius: 2px;
    background: #fff;
-   padding: 4px;
    display: flex;
    align-items: center;
    box-sizing: border-box;
@@ -73,9 +73,8 @@
    position: relative;
    color: rgb(0, 0, 0, 0.75);
    margin: 0;
-   padding: 3px 0 3px 10px;
-   font-size: 22px;
-   height: 34px;
+   padding: 0.3em 0 0.3em 0.6em;
+   font-size: 1.6em;
    box-shadow: none !important;
    border: none !important;
    background: none !important;
@@ -87,7 +86,7 @@
 #jf-submit-btn {
    float: right;
    margin: 0;
-   padding: 7px 6px 4px 8px;
+   padding: 0.7em 0.6em 0.4em 0.8em;
    border: none;
    background: #eee;
    font-weight: normal;
@@ -97,12 +96,17 @@
 }
 
 #jf-submit-btn > div {
-   font-size: 24px;
-   line-height: 1em;;
+   font-size: 2.4em;
+   line-height: 1em;
 }
 
 #jf-results {
-   margin-top: .5em;
+   margin-top: .3em;
+}
+
+#jf-no-results {
+   font-size: 1.6em;
+   margin: 0.6em 0 0 0.6em;
 }
 
 #jf-no-match {
@@ -112,15 +116,15 @@
 
 
 .jf-entry {
-   padding: 0 0 0 12px;
-   margin: 0 0 20px 0;
+   padding: 0 0 0 1em;
+   margin: 0 0 1.3em 0;
    border-bottom: 1px solid #eee;
+   display: flex;
+   flex-wrap: wrap;
 }
 
 .jf-info {
    width: 25%;
-   font-size: 24px;
-   float: left;
    box-sizing: border-box;
 }
 
@@ -129,7 +133,6 @@
 }
 
 .jf-furigana {
-   font-size: 14px;
    min-height: 1.15em;
    box-sizing: border-box;
 }
@@ -137,73 +140,74 @@
 .jf-furigana > span {
    display: inline-block;
    text-align: center;
-   min-width: 2em;
-   line-height: 1.15;
+   min-width: 2.6em;
+   line-height: 1em;
 }
 
 .jf-furigana > .kana {
-   min-width: 2.25em;
+   min-width: 2em;
+   font-size: 1.35em;
 }
 
 .jf-chars {
    box-sizing: border-box;
-   margin-bottom: 10px;
-   font-size: 31px;
-   line-height: 1.1;
+   margin-bottom: 0.5em;
+   font-size: 2.7em;
+   line-height: 1.1em;
 }
 
 .jf-defs {
    display: inline-block;
    width: 75%;
-   padding: 0 0.46875rem;
-   font-size: 16px;
-   line-height: 1.5;
-   margin-bottom: 10px;
+   padding: 0 0.2em;
+   font-size: 1.2em;
+   line-height: 1.5em;
+   margin-bottom: 1em;
    box-sizing: border-box;
 }
 
 .jf-defs-long {
-   padding-left: calc(25% + .46875rem);
+   padding-left: calc(25% + 0.2em);
 }
 
 .jf-def-num {
    color: #999;
-   line-height: 30px;
-   margin-right: 5px;
+   line-height: 1.5em;
+   margin-right: 0.3em;
    position: relative;
    height: 100%;
-   font-size: 16px;
+   font-size: 1.25em;
 }
 
 .jf-def-text {
-   font-size: 19px;
+   font-size: 1.3em;
 }
 
 .jf-def-abs {
-   font-size: 14px;
+   font-size: 1.1em;
    color: #666;
-   margin-left: 8px;
+   margin-left: 0.8em;
 }
 
 .jf-def-supp {
-   font-size: 14px;
+   font-size: 1.1em;
    color: #999;
-   margin-left: 8px;
+   margin-left: 0.8em;
 }
 
 .jf-def-notes {
-   font-size: 14px;
+   font-size: 1.1em;
 }
 
 .jf-tag {
    color: #888;
-   font-size: 13px;
-   margin-top: 10px;
+   font-size: 1em;
+   margin-top: 0.65em;
    font-weight: bold;
 }
 
 .jf-forms {
-   font-size: 19px;
+   font-size: 1.2em;
 }
 
 
