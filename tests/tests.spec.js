@@ -24,10 +24,13 @@ export const test = base.extend({
 });
 
 test.describe("main", () => {
+   let jframe;
+   
    test.beforeEach(async ({ page, context }) => {
       let [background] = context.serviceWorkers();
       if (!background)
          background = await context.waitForEvent("serviceworker");
+      jframe = page.locator("#jf-content");
       await page.goto("https://www.google.com");
    });
 
@@ -36,14 +39,13 @@ test.describe("main", () => {
    });
 
    test.skip("searches 'test' and displays results", async ({ page }) => {
-      const jframe = page.locator("#jf-content");;
       await jframe.locator("#jf-searchbar").fill("test");
       await jframe.locator("#jf-submit-btn").click();
+
       await expect(jframe.locator(".jf-entry")).toHaveCount(20);
    });
 
    test.skip("scrolls to bottom", async ({ page }) => {
-      const jframe = page.locator("#jf-content");
       let scrollHeight = await jframe.evaluate(content => content.scrollHeight);
       let scrollTop = await jframe.evaluate((content, scrollHeight) => {
          content.scrollTo(0, scrollHeight);
@@ -54,14 +56,12 @@ test.describe("main", () => {
    });
 
    test.skip("searches invalid text 'dasdasd' and displays that no results were found", async ({ page }) => {
-      const jframe = page.locator("#jf-content");;
       await jframe.locator("#jf-searchbar").fill("dasdasd");
       await jframe.locator("#jf-submit-btn").click();
       await expect(jframe.locator("#jf-no-results")).toHaveText("Sorry, couldn't find anything matching dasdasd.");
    });
 
    test.skip("searches 'test', scrolls to bottom and loads more results", async ({ page }) => {
-      const jframe = page.locator("#jf-content");
       await jframe.locator("#jf-searchbar").fill("test");
       await jframe.locator("#jf-submit-btn").click();
       await page.waitForFunction(() => {
@@ -75,12 +75,30 @@ test.describe("main", () => {
    });
 
    test.skip("searches 'cake', clicks on 'Read more' and displays wikipedia defintiion", async ({ page }) => {
-      const jframe = page.locator("#jf-content");
       const abstract = jframe.locator("#jf-results .jf-def-abs >> nth=0");
       await jframe.locator("#jf-searchbar").fill("cake");
       await jframe.locator("#jf-submit-btn").click();
       await abstract.locator("a").click();
+
       await expect(abstract).toContainText("with some varieties also requiring liquid and leavening agents.");
    });
+
+   test.skip("searches 'test', sets searchbar to 'cake', then scrolls to bottom and searches 'cake'", async ({ page }) => {
+      await jframe.locator("#jf-searchbar").fill("test");
+      await jframe.locator("#jf-submit-btn").click();
+      await page.waitForFunction(() => {
+         return document.querySelector("#jf-results").children.length === 20;
+      })
+      await jframe.locator("#jf-searchbar").fill("cake");
+      await jframe.evaluate(content => {
+         content.scrollTo(0, content.scrollHeight);
+      });
+      await jframe.locator(".jf-entry").count() === 40;
+      await jframe.locator("#jf-submit-btn").click();
+
+      await expect(jframe.locator(".jf-entry")).toHaveCount(20);
+   });
 });
+
+ 
 

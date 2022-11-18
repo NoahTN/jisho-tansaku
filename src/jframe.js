@@ -11,6 +11,7 @@ function JFrame(props) {
    const furthestPage = useRef(-1);
    const isLastPage = useRef();
    const lastSearchedText = useRef();
+   const [displayLoading, setDisplayLoading] = useState(false);
    const [searchText, setSearchText] = useState("");
    const [searchResults, setSearchResults] = useState([]);
    const [resultCountText, setResultCountText] = useState("");
@@ -34,7 +35,7 @@ function JFrame(props) {
       function onJFrameScroll(event) {
          const element = event.target;
          if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-            searchUsingText(searchbarRef.current.value);
+            searchUsingText(lastSearchedText.current);
          }
       }
 
@@ -59,7 +60,7 @@ function JFrame(props) {
       window.addEventListener("resize", onWindowResize);
       jFrameRef.current.addEventListener("scroll", onJFrameScroll);
 
-      let resizeObserver = new ResizeObserver(throttle(() => {
+      const resizeObserver = new ResizeObserver(throttle(() => {
          if(jFrameRef.current.offsetWidth) {
             chrome.storage.sync.set({width: jFrameRef.current.offsetWidth, height: jFrameRef.current.offsetHeight});
          }
@@ -71,19 +72,20 @@ function JFrame(props) {
          resizeObserver.disconnect();
       };
    }, []);
-
-   useEffect(() => {
-      lastSearchedText.current = searchText;
-   }, [searchResults])
-
+ 
    function searchUsingText(text) {
       const repeatedSearch = (text === lastSearchedText.current);
-      if(repeatedSearch && isLastPage.current) {
+      if(!repeatedSearch) {
+         jFrameRef.current.scrollTo(0, 0)
+      }
+      else if(isLastPage.current) {
          return;
       }
+      
       if(text) {
+         setDisplayLoading(true);
          const page = repeatedSearch ? (furthestPage.current+1) : 0;
-         lastSearchedText.current = text;
+         console.log([text, lastSearchedText.current, page]);
          chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text, page: (page+1)}, (response) => {
             const result = getObjectsFromHTML(response);
             if(page > 0) {
@@ -95,6 +97,8 @@ function JFrame(props) {
             }
             furthestPage.current = page;
             isLastPage.current = result[1] ? false : true;
+            lastSearchedText.current = text;
+            setDisplayLoading(false);
          });
       }
    }
@@ -144,6 +148,7 @@ function JFrame(props) {
                      ref={ searchbarRef }
                   >
                   </input>
+                  {displayLoading && <div className="lds-ring"><div></div><div></div><div></div><div></div></div>}
                   <button id="jf-submit-btn" type="submit">
                      <div>🔍︎</div>
                   </button>
@@ -164,9 +169,9 @@ function JFrame(props) {
                         defs={ entry.defs }
                         key={ index }
                      />
-                  ) : <div id="jf-no-results">
+                  ) : (!displayLoading && <div id="jf-no-results">
                      Sorry, couldn't find anything matching { lastSearchedText.current }.
-                  </div>
+                  </div>)
                )}
             </div>
          </div>   
