@@ -18,6 +18,7 @@ module.exports = {
    entry: {
       background: "./src/background.js",
       content: "./src/content.js",
+      content_show_scroll_only: "./src/content_show_scroll_only.js"
    },
    output: {
       path: path.resolve(__dirname, "build"),

@@ -214,9 +214,9 @@
 .lds-ring {
    display: inline-block;
    position: relative;
-   width: 4em;
-   height: 4em;
-   margin-right: 2em;
+   width: 3.5em;
+   height: 3.5em;
+   margin-right: 1.75em;
  }
  .lds-ring div {
    box-sizing: border-box;

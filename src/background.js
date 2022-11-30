@@ -14,14 +14,21 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
    if (info.menuItemId === "my-menu") {
       // Calling context menu when already activated
       if(tab.id in tabAndTextMap && info.selectionText) {
-         console.log(info.selectionText);
          chrome.tabs.sendMessage(tab.id, {type: Constants.TYPE_SEARCH_CONTEXT, data: info.selectionText});
       }
+      if(tabAndTextMap[tab.id] === info.selectionText) {
+         chrome.scripting.executeScript({
+            target: {tabId: tab.id},
+            files: ["content.js"]
+         });
+      }
+      else {
+         chrome.scripting.executeScript({
+            target: {tabId: tab.id},
+            files: ["content_show_scroll_only.js"]
+         });
+      }
       tabAndTextMap[tab.id] = info.selectionText;
-      chrome.scripting.executeScript({
-         target: {tabId: tab.id},
-         files: ["content.js"]
-      });
    }
 });
 

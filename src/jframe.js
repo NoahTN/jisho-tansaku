@@ -41,12 +41,12 @@ function JFrame(props) {
 
       searchbarRef.current.focus();
 
-      chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
-         if(response) {
-            setSearchText(response);
-            searchUsingText(response);
-         }
-      });
+      // chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
+      //    if(response) {
+      //       setSearchText(response);
+      //       searchUsingText(response);
+      //    }
+      // });
 
       chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
          if (request.type === Constants.TYPE_SEARCH_CONTEXT) {
@@ -76,7 +76,7 @@ function JFrame(props) {
    function searchUsingText(text) {
       const repeatedSearch = (text === lastSearchedText.current);
       if(!repeatedSearch) {
-         jFrameRef.current.scrollTo(0, 0)
+         jFrameRef.current.scrollTo(0, 0);
       }
       else if(isLastPage.current) {
          return;
@@ -85,7 +85,7 @@ function JFrame(props) {
       if(text) {
          setDisplayLoading(true);
          const page = repeatedSearch ? (furthestPage.current+1) : 0;
-         console.log([text, lastSearchedText.current, page]);
+         //console.log([text, lastSearchedText.current, page]);
          chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text, page: (page+1)}, (response) => {
             const result = getObjectsFromHTML(response);
             if(page > 0) {
