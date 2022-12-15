@@ -12,7 +12,8 @@
     "build": "webpack --config=webpack.config.js",
     "test-build": "webpack --config=webpack.test.config.js",
     "dev": "cross-env NODE_ENV=development webpack --config=webpack.config --watch",
-    "test": "npx playwright test"
+    "test": "npx playwright test tests/main-tests",
+    "test-kanji":  "npx playwright test tests/kanji-tests.spec.js"
   },
   "devDependencies": {
     "@babel/core": "^7.17.5",

@@ -3,7 +3,7 @@ const Constants = {
    TYPE_SEARCH_FETCH: 1,
    TYPE_SEARCH_CONTEXT: 2,
    TYPE_READ_MORE: 3,
-   
+
    DEFAULT_DEF: 0,
    WIKIPEDIA_DEF: 1,
    OTHERS_DEF: 2,

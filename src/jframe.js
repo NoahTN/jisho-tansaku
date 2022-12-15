@@ -1,21 +1,24 @@
-import { useEffect, useRef, useState, useReducer, Fragment } from 'react';
-import { getObjectsFromHTML, parseWikipediaDef } from './parser';
-import Constants from './constants';
-import Draggable from 'react-draggable';
-import { throttle } from './common-functions';
-// TODO: loading symbol, scroll to top when searching, multiple pages, wikipedia expanding, behaviour with regex (ex. wild cards)
+import { useEffect, useRef, useState, useReducer } from "react";
+import { getObjectsFromHTML } from "./tools/parser";
+import Constants from "./tools/constants";
+import Draggable from "react-draggable";
+import { throttle } from "./tools/common-functions";
+import DictEntry  from "./templates/dict-entry";
+import KanjiEntry from "./templates/kanji-entry";
+// TODO:  multiple pages, behaviour with regex (ex. wild cards)
 
 function JFrame(props) {
-   const jFrameRef = useRef();
-   const searchbarRef = useRef();
-   const furthestPage = useRef(-1);
-   const isLastPage = useRef();
-   const lastSearchedText = useRef();
-   const [displayLoading, setDisplayLoading] = useState(false);
-   const [searchText, setSearchText] = useState("");
-   const [searchResults, setSearchResults] = useState([]);
-   const [resultCountText, setResultCountText] = useState("");
-   const [posAndBounds, dispatch] = useReducer((state, action) => {
+    const jFrameRef = useRef();
+    const searchbarRef = useRef();
+    const furthestPage = useRef(-1);
+    const isLastPage = useRef();
+    const lastSearchedText = useRef();
+    const obeserverRef = useRef(null);
+    const [displayLoading, setDisplayLoading] = useState(false);
+    const [searchText, setSearchText] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [resultCountText, setResultCountText] = useState("");
+    const [posAndBounds, dispatch] = useReducer((state, action) => {
       switch(action.type) {
          case Constants.ACTION_UPDATE:
             return {
@@ -32,46 +35,54 @@ function JFrame(props) {
    let prevDocHeight = document.documentElement.clientHeight;
 
    useEffect(() => {
-      function onJFrameScroll(event) {
-         const element = event.target;
-         if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-            searchUsingText(lastSearchedText.current);
+      chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
+         if(response) {
+            setSearchText(response);
+            searchUsingText(response);
          }
-      }
-
-      searchbarRef.current.focus();
-
-      // chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
-      //    if(response) {
-      //       setSearchText(response);
-      //       searchUsingText(response);
-      //    }
-      // });
-
-      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-         if (request.type === Constants.TYPE_SEARCH_CONTEXT) {
-            setSearchText(request.data);
-            searchUsingText(request.data);
-         }
-         sendResponse(true);
-         return true;
       });
 
       window.addEventListener("resize", onWindowResize);
-      jFrameRef.current.addEventListener("scroll", onJFrameScroll);
+      chrome.runtime.onMessage.addListener(searchContext);
 
-      const resizeObserver = new ResizeObserver(throttle(() => {
+      obeserverRef.current = new ResizeObserver(throttle(() => {
          if(jFrameRef.current.offsetWidth) {
             chrome.storage.sync.set({width: jFrameRef.current.offsetWidth, height: jFrameRef.current.offsetHeight});
          }
          dispatch({type: Constants.ACTION_UPDATE});
-      }, 250));
-      resizeObserver.observe(jFrameRef.current);
+      }, 1000));
 
       return () => {
-         resizeObserver.disconnect();
-      };
+         chrome.runtime.onMessage.removeListener(searchContext);
+      }
    }, []);
+
+   useEffect(() => {
+      jFrameRef.current.addEventListener("scroll", (event) => {
+         const element = event.target;
+         if(element.scrollHeight - element.scrollTop === element.clientHeight) {
+            searchUsingText(lastSearchedText.current);
+         }
+      });
+      
+      searchbarRef.current.focus();
+      obeserverRef.current.observe(jFrameRef.current);
+      
+
+      return () => {
+         obeserverRef.current.disconnect();
+         jFrameRef.current.removeEventListener("scroll", onWindowResize);
+      };
+   }, [jFrameRef]);
+
+   function searchContext(request, sender, sendResponse) {
+      if (request.type === Constants.TYPE_SEARCH_CONTEXT) {
+         setSearchText(request.data);
+         searchUsingText(request.data);
+      }
+      sendResponse(true);
+      return true;
+   }
  
    function searchUsingText(text) {
       const repeatedSearch = (text === lastSearchedText.current);
@@ -127,8 +138,8 @@ function JFrame(props) {
          handle=".drag-handle" 
          bounds={{
             top: 0, 
-            left: 0, 
-            right: posAndBounds.rightBounds, 
+            left: 2, 
+            right: posAndBounds.rightBounds-2, 
             bottom: posAndBounds.bottomBounds
          }}
          defaultPosition={{x: props.defaultX+props.width <= document.documentElement.clienWidth ? props.defaultX : document.documentElement.clientWidth-props.width, y: props.defaultY}}
@@ -176,77 +187,6 @@ function JFrame(props) {
             </div>
          </div>   
       </Draggable>
-   );
-}
-
-function DictEntry(props) {
-   const [wikiDef, setWikiDef] = useState(() => {
-      let output = "";
-      for(let def of props.defs) {
-         if(def.type === Constants.WIKIPEDIA_DEF && def.data[1]) {
-            output = <>
-               { def.data[1].split("Read more")[0] }
-               <a href={"https://jisho.org/word/" + props.chars} onClick={ handleReadMoreClick }>Read more</a>
-            </>
-            break;
-         }
-      }
-      return output;
-   }); 
-
-   function handleReadMoreClick(event) {
-      event.preventDefault();
-      chrome.runtime.sendMessage({type: Constants.TYPE_READ_MORE, url: event.target.href}, (response) => {
-         setWikiDef(parseWikipediaDef(response));
-      });
-   }
-
-   return (
-      <div className="jf-entry">
-         <div className={"jf-info" + (props.chars.length > 5 ? " jf-info-long" : "")}>
-            <div className="jf-furigana">
-               {props.furigana.map((furi, index) => {
-                  return <span key={ index } className={furi ? "kana" : ""}>{ furi }</span>;
-               })}
-            </div>
-            <div className="jf-chars">{ props.chars }</div>
-         </div>
-         <div className={"jf-defs" + (props.chars.length > 5 ? " jf-defs-long" : "")}>
-            {props.defs.map((def, index) => {
-               return (
-                  <Fragment key={ index }>
-                     <div className="jf-tag">{ def.tag }</div>
-                     <div className="jf-def">
-                        {(() => {
-                           switch(def.type) {
-                              case Constants.WIKIPEDIA_DEF:
-                                 return <>
-                                    <span className="jf-def-text">{ def.data[0] }</span>
-                                    <span className="jf-def-abs">{ wikiDef }</span>
-                                 </>
-                              case Constants.OTHERS_DEF:
-                                 return <>
-                                    {def.data.map((form, formIndex) => {
-                                       return <span key={ formIndex }>{form + (formIndex < def.data.length-1 ? "、" : "")}</span>
-                                    })}
-                                 </>
-                              case Constants.NOTES_DEF:
-                                 return <span className="jf-def-notes">{def.data[0]}</span>
-                              default:
-                                 return <>
-                                    <span className="jf-def-num">{ index+1 }. </span>
-                                    <span className="jf-def-text">{ def.data[0] }</span>
-                                    {def.data.length > 1 ? <span className="jf-def-supp">{ def.data[1] }</span> : ""}
-                                 </>
-                           }
-                        }
-                        )()}
-                     </div>
-                  </Fragment>
-               );
-            })}
-         </div>
-      </div>
    );
 }
 

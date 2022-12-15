@@ -1,8 +1,8 @@
-import Constants from "./constants"
+import Constants from "./tools/constants"
 
 const tabAndTextMap = {};
 
-chrome.runtime.onInstalled.addListener(function() {
+chrome.runtime.onInstalled.addListener(() => {
    chrome.contextMenus.create({
       "id": "my-menu",
       "title": "Search Jisho",
