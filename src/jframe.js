@@ -58,13 +58,6 @@ function JFrame(props) {
    }, []);
 
    useEffect(() => {
-      jFrameRef.current.addEventListener("scroll", (event) => {
-         const element = event.target;
-         if(element.scrollHeight - element.scrollTop === element.clientHeight) {
-            searchUsingText(lastSearchedText.current);
-         }
-      });
-      
       searchbarRef.current.focus();
       obeserverRef.current.observe(jFrameRef.current);
       
@@ -100,14 +93,14 @@ function JFrame(props) {
          chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text, page: (page+1)}, (response) => {
             const result = getObjectsFromHTML(response);
             if(page > 0) {
-               setSearchResults(prev => [...prev].concat(result[0]));
+               setSearchResults(prev => [...prev].concat(result.entries));
             }
             else {
-               setSearchResults(result[0]);
-               setResultCountText(result[1] ? result[1] : "");
+               setSearchResults(result.entries);
+               setResultCountText(result.countText ? result.countText : "");
             }
             furthestPage.current = page;
-            isLastPage.current = result[1] ? false : true;
+            isLastPage.current = result.isLastPage;
             lastSearchedText.current = text;
             setDisplayLoading(false);
          });
@@ -184,6 +177,11 @@ function JFrame(props) {
                      Sorry, couldn't find anything matching { lastSearchedText.current }.
                   </div>)
                )}
+            </div>
+            <div id="jf-more-words">{
+               (searchResults.length && !isLastPage.current) ?
+               <a onClick={() => searchUsingText(lastSearchedText.current)}>More Words {">"}</a> : null
+            }
             </div>
          </div>   
       </Draggable>

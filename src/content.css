@@ -4,6 +4,15 @@
    z-index: 2147483647;
 }
 
+#jframe a {
+   color: #4A80B5;
+}
+
+#jframe a:hover {
+   color: #000;
+   cursor: pointer;
+}
+
 .drag-handle {
    background-color: #69D838;
    height: 0.75em;
@@ -114,100 +123,9 @@
    margin-left: 0.5em;
 }
 
-
-.jf-entry {
-   padding: 0 0 0 1em;
-   margin: 0 0 1.3em 0;
-   border-bottom: 1px solid #eee;
-   display: flex;
-   flex-wrap: wrap;
-}
-
-.jf-info {
-   width: 25%;
-   box-sizing: border-box;
-}
-
-.jf-info-long {
-   width: 100%;
-}
-
-.jf-furigana {
-   min-height: 1.15em;
-   box-sizing: border-box;
-}
-
-.jf-furigana > span {
-   display: inline-block;
-   text-align: center;
-   min-width: 2.6em;
-   line-height: 1em;
-}
-
-.jf-furigana > .kana {
-   min-width: 2em;
-   font-size: 1.2em;
-}
-
-.jf-chars {
-   box-sizing: border-box;
-   margin-bottom: 0.5em;
-   font-size: 2.7em;
-   line-height: 1.1em;
-}
-
-.jf-defs {
-   display: inline-block;
-   width: 75%;
-   padding: 0 0.2em;
-   font-size: 1.2em;
-   line-height: 1.5em;
-   margin-bottom: 1em;
-   box-sizing: border-box;
-}
-
-.jf-defs-long {
-   padding-left: calc(25% + 0.2em);
-}
-
-.jf-def-num {
-   color: #999;
-   line-height: 1.5em;
-   margin-right: 0.3em;
-   position: relative;
-   height: 100%;
+#jf-more-words {
    font-size: 1.25em;
-}
-
-.jf-def-text {
-   font-size: 1.3em;
-}
-
-.jf-def-abs {
-   font-size: 1.1em;
-   color: #666;
-   margin-left: 0.8em;
-}
-
-.jf-def-supp {
-   font-size: 1.1em;
-   color: #999;
-   margin-left: 0.8em;
-}
-
-.jf-def-notes {
-   font-size: 1.1em;
-}
-
-.jf-tag {
-   color: #888;
-   font-size: 1em;
-   margin-top: 0.65em;
-   font-weight: bold;
-}
-
-.jf-forms {
-   font-size: 1.2em;
+   padding: 0 0 1em 1em;
 }
 
 /* Loading Spinner CSS */

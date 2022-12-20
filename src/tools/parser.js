@@ -6,6 +6,7 @@ export function getObjectsFromHTML(rawHTML) {
    const entries = [];
    const countText = root.querySelector(".result_count")?.text;
    const content = root.querySelectorAll("[class='concept_light clearfix']");
+   const isLastPage = !root.querySelector(".more");
    // console.log(content);
    for(const entry of content) {
       entries.push({
@@ -14,7 +15,11 @@ export function getObjectsFromHTML(rawHTML) {
          defs: parseDefs(entry.querySelector(".meanings-wrapper"))
       });  
    }
-   return [entries, countText];
+   return {
+      entries: entries, 
+      countText: countText, 
+      isLastPage: isLastPage
+   };
 }
 
 function parseFurigana(nodes) {
@@ -48,7 +53,7 @@ function parseDefs(nodes) {
          result.data.push(defs[index].querySelector(".meaning-meaning").text);
          const abstract = defs[index].querySelector(".meaning-abstract");
          if(abstract) {
-            result.data.push(abstract.text);
+            result.data.push([abstract.text, abstract.querySelector("a").attributes.href]);
          }
       }
       else if(tag[0] === "O") {

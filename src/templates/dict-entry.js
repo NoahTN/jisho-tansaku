@@ -1,21 +1,24 @@
-import { useState, Fragment } from "react";
+import { useState, useEffect, Fragment } from "react";
 import { parseWikipediaDef } from "../tools/parser";
 import Constants from "../tools/constants";
+import "./dict-entry.css";
 
 export default function DictEntry(props) {
-   const [wikiDef, setWikiDef] = useState(() => {
+   const [wikiDef, setWikiDef] = useState();
+
+   useEffect(() => {
       let output = "";
       for(let def of props.defs) {
-         if(def.type === Constants.WIKIPEDIA_DEF && def.data[1]) {
+         if(def.type === Constants.WIKIPEDIA_DEF && def.data.length > 1) {
             output = <>
-               { def.data[1].split("Read more")[0] }
-               <a href={"https://jisho.org/word/" + props.chars} onClick={ handleReadMoreClick }>Read more</a>
+               { def.data[1][0].split("Read more")[0] }
+               <a href={ def.data[1][1] } onClick={ handleReadMoreClick }>Read more</a>
             </>
             break;
          }
       }
-      return output;
-   }); 
+      setWikiDef(output);
+   }, [props.defs]);
 
    function handleReadMoreClick(event) {
       event.preventDefault();
