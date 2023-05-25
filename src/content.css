@@ -15,7 +15,7 @@
 
 .drag-handle {
    background-color: #69D838;
-   height: 0.75em;
+   height: 1.2em;
    position: sticky;
    top: 0;
    cursor: move;
@@ -31,7 +31,7 @@
    color: #222;
    font-style: normal !important;
    font-weight: normal !important;
-   font-size: 12px;
+   font-size: 13px;
    line-height: 1.5em;
    margin: 0;
    padding: 0;
@@ -65,7 +65,7 @@
    width: 100%;
    box-sizing: border-box;
    position: sticky;
-   top: 0.75em;
+   top: 1.2em;
    z-index: 99999;
 }
 
@@ -89,6 +89,10 @@
    background: none !important;
    outline: none !important;
    flex: 1;
+}
+
+#jf-searchbar::placeholder {
+   text-transform: none;
 }
 
 
@@ -126,6 +130,21 @@
 #jf-more-words {
    font-size: 1.25em;
    padding: 0 0 1em 1em;
+}
+
+.credits {
+   font-size: 1.25em;
+   text-align: center;
+}
+
+#jf-more-words > div {
+   display: flex;
+   justify-content: space-between;
+}
+
+#jf-more-words .credits {
+   margin: 0 1em 0 0;
+   font-size: inherit;
 }
 
 /* Loading Spinner CSS */

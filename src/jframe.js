@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState, useReducer } from "react";
 import { getObjectsFromHTML } from "./tools/parser";
-import Constants from "./tools/constants";
 import Draggable from "react-draggable";
 import { throttle } from "./tools/common-functions";
 import DictEntry  from "./templates/dict-entry";
 import KanjiEntry from "./templates/kanji-entry";
-// TODO:  multiple pages, behaviour with regex (ex. wild cards)
+// TODO:  behaviour with regex (ex. wild cards)
 
 function JFrame(props) {
     const jFrameRef = useRef();
@@ -14,42 +13,30 @@ function JFrame(props) {
     const isLastPage = useRef();
     const lastSearchedText = useRef();
     const obeserverRef = useRef(null);
+    const prevDocHeight = useRef(document.documentElement.clientHeight);
     const [displayLoading, setDisplayLoading] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [resultCountText, setResultCountText] = useState("");
-    const [posAndBounds, dispatch] = useReducer((state, action) => {
-      switch(action.type) {
-         case Constants.ACTION_UPDATE:
-            return {
-               bottomBounds: document.documentElement.clientHeight - jFrameRef.current.offsetHeight,
-               rightBounds:document.documentElement.clientWidth - jFrameRef.current.offsetWidth
-            };
-         default:
-            throw new Error();
-      }
-   }, {
-      bottomBounds: document.documentElement.clientHeight - props.height,
-      rightBounds: document.documentElement.clientWidth - props.width
-   });
-   let prevDocHeight = document.documentElement.clientHeight;
+    const [bounds, setBounds] = useState({bottom: document.documentElement.clientHeight - props.height, right: document.documentElement.clientWidth - props.width});
 
    useEffect(() => {
-      chrome.runtime.sendMessage({type: Constants.TYPE_SIGNAL_READY}, (response) => {
+    
+      chrome.runtime.sendMessage({type: "signal-ready"}, (response) => {
          if(response) {
             setSearchText(response);
             searchUsingText(response);
          }
       });
 
-      window.addEventListener("resize", onWindowResize);
       chrome.runtime.onMessage.addListener(searchContext);
-
+      
+      window.addEventListener("resize", onWindowResize);
       obeserverRef.current = new ResizeObserver(throttle(() => {
          if(jFrameRef.current.offsetWidth) {
             chrome.storage.sync.set({width: jFrameRef.current.offsetWidth, height: jFrameRef.current.offsetHeight});
          }
-         dispatch({type: Constants.ACTION_UPDATE});
+         updateBounds();
       }, 1000));
 
       return () => {
@@ -61,15 +48,21 @@ function JFrame(props) {
       searchbarRef.current.focus();
       obeserverRef.current.observe(jFrameRef.current);
       
-
       return () => {
          obeserverRef.current.disconnect();
          jFrameRef.current.removeEventListener("scroll", onWindowResize);
       };
    }, [jFrameRef]);
 
+   function updateBounds() {
+      setBounds({
+         bottom: document.documentElement.clientHeight - jFrameRef.current.offsetHeight,
+         right: document.documentElement.clientWidth - jFrameRef.current.offsetWidth
+      });
+   }
+
    function searchContext(request, sender, sendResponse) {
-      if (request.type === Constants.TYPE_SEARCH_CONTEXT) {
+      if (request.type === "search-context") {
          setSearchText(request.data);
          searchUsingText(request.data);
       }
@@ -90,7 +83,7 @@ function JFrame(props) {
          setDisplayLoading(true);
          const page = repeatedSearch ? (furthestPage.current+1) : 0;
          //console.log([text, lastSearchedText.current, page]);
-         chrome.runtime.sendMessage({type: Constants.TYPE_SEARCH_FETCH, data: text, page: (page+1)}, (response) => {
+         chrome.runtime.sendMessage({type: "search-query", data: text, page: (page+1)}, (response) => {
             const result = getObjectsFromHTML(response);
             if(page > 0) {
                setSearchResults(prev => [...prev].concat(result.entries));
@@ -108,13 +101,13 @@ function JFrame(props) {
    }
 
    function onWindowResize() {
-      if(document.documentElement.clientHeight !== prevDocHeight && jFrameRef.current.offsetHeight) {
+      if(document.documentElement.clientHeight !== prevDocHeight.current && jFrameRef.current.offsetHeight) {
          chrome.storage.sync.get("y", (data) => {
             jFrameRef.current.style.height = Math.min(document.documentElement.clientHeight, jFrameRef.current.offsetHeight+data.y)+"px";
          });
-         prevDocHeight = document.documentElement.clientHeight;
+         prevDocHeight.current = document.documentElement.clientHeight;
       }
-      dispatch({type: Constants.ACTION_UPDATE});
+      updateBounds();
    };
 
    function handleSubmit(event) {
@@ -123,6 +116,7 @@ function JFrame(props) {
    };
 
    function handleDragStop(e, data) {
+      console.log([data.x, data.y]);
       chrome.storage.sync.set({x: data.x, y: data.y});
    }
 
@@ -132,10 +126,10 @@ function JFrame(props) {
          bounds={{
             top: 0, 
             left: 2, 
-            right: posAndBounds.rightBounds-2, 
-            bottom: posAndBounds.bottomBounds
+            right: bounds.right-2, 
+            bottom: bounds.bottom
          }}
-         defaultPosition={{x: props.defaultX+props.width <= document.documentElement.clienWidth ? props.defaultX : document.documentElement.clientWidth-props.width, y: props.defaultY}}
+         defaultPosition={{x: props.defaultX+props.width <= document.documentElement.clientWidth ? props.defaultX : document.documentElement.clientWidth-props.width, y: props.defaultY}}
          onStop={ handleDragStop }
       >
          <div id="jf-content" ref={ jFrameRef } style={{width: props.width+"px", height: props.height+"px"}}>
@@ -179,13 +173,23 @@ function JFrame(props) {
                )}
             </div>
             <div id="jf-more-words">{
-               (searchResults.length && !isLastPage.current) ?
-               <a onClick={() => searchUsingText(lastSearchedText.current)}>More Words {">"}</a> : null
+               (searchResults.length && !isLastPage.current) ? <div>
+                  <a onClick={() => searchUsingText(lastSearchedText.current)}>More Words {">"}</a>
+                  <Credits/>
+               </div>
+                : null
             }
             </div>
+            {!resultCountText.length ? <Credits /> : null}
          </div>   
       </Draggable>
    );
+}
+
+function Credits() {
+   return <div className="credits">
+      <div>All data from <a href="https://jisho.org/" target="_blankl" rel="noopener noreferrer">https://jisho.org/</a></div>
+   </div>
 }
 
 export default JFrame;

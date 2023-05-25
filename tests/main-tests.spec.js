@@ -33,17 +33,17 @@ test.describe("main", () => {
       await page.goto("https://www.google.com");
    });
 
-   test.skip("content script injects into page", async ({ page }) => {
+   test("content script injects into page", async ({ page }) => {
       await expect(page.locator("#jframe")).toHaveCount(1);
    });
 
-   DataTransferItemList.kip("searches 'test' and displays results", async ({ page }) => {
+   test("searches 'test' and displays results", async ({ page }) => {
       await jframe.locator("#jf-searchbar").fill("test");
       await jframe.locator("#jf-submit-btn").click();
       await expect(jframe.locator(".jf-entry")).toHaveCount(20);
    });
 
-   test.skip("scrolls to bottom", async ({ page }) => {
+   test("scrolls to bottom", async ({ page }) => {
       let scrollHeight = await jframe.evaluate(content => content.scrollHeight);
       let scrollTop = await jframe.evaluate((content, scrollHeight) => {
          content.scrollTo(0, scrollHeight);
@@ -52,7 +52,7 @@ test.describe("main", () => {
       expect(scrollTop).toBeCloseTo(scrollHeight-500);
    });
 
-   test.skip("searches invalid text 'dasdasd' and displays that no results were found", async ({ page }) => {
+   test("searches invalid text 'dasdasd' and displays that no results were found", async ({ page }) => {
       await jframe.locator("#jf-searchbar").fill("dasdasd");
       await jframe.locator("#jf-submit-btn").click();
       await expect(jframe.locator("#jf-no-results")).toHaveText("Sorry, couldn't find anything matching dasdasd.");

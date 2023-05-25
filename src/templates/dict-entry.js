@@ -22,7 +22,7 @@ export default function DictEntry(props) {
 
    function handleReadMoreClick(event) {
       event.preventDefault();
-      chrome.runtime.sendMessage({type: Constants.TYPE_READ_MORE, url: event.target.href}, (response) => {
+      chrome.runtime.sendMessage({type: "read-more", url: event.target.href}, (response) => {
          setWikiDef(parseWikipediaDef(response));
       });
    }
