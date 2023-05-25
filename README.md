@@ -1,6 +1,6 @@
 # Jisho Tansaku
 
-> Unofficial Chrome extension for conveniently looking up and display words using [Jisho.org](https://jisho.org/).
+Unofficial Chrome extension for conveniently looking up and display words using [Jisho.org](https://jisho.org/).
 
 ## Features
 
