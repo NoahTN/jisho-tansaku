@@ -8,6 +8,13 @@ Unofficial Chrome extension for conveniently looking up and displaying words usi
 - Search via context-menu on highlighted text
 - Resizable and moveable interface
 
+## Usage
+- **Clicking Icon (Recommended to pin to toolbar)**
+![click example](chrome/images/example-clicking.png)
+
+- **Context Menu**
+![context menu example](chrome/images/example-context.png)
+
 ## Disclaimer
 
 The core functionality of this extension is all depenent on the abiltiy to scrape the HTML of Jisho.org. Thus, the extension may suddenly cease to work should the HTML undergo major changes. 

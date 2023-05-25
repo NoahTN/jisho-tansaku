@@ -29,8 +29,6 @@ function JFrame(props) {
          }
       });
 
-      chrome.runtime.onMessage.addListener(searchContext);
-      
       window.addEventListener("resize", onWindowResize);
       obeserverRef.current = new ResizeObserver(throttle(() => {
          if(jFrameRef.current.offsetWidth) {
@@ -114,6 +112,10 @@ function JFrame(props) {
       event.preventDefault();
       searchUsingText(searchText);
    };
+
+   function handleDragStart(e) {
+      document
+   }
 
    function handleDragStop(e, data) {
       console.log([data.x, data.y]);
