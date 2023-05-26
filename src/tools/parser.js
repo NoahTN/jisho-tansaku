@@ -6,54 +6,31 @@ export function getObjectsFromJSON(json) {
    const entries = [];
    for(const entry of content) {
       entries.push({
-         furigana: entry.japanese[0].reading,
+         furigana: parseFurigana(entry),
          chars: parseChars(entry),
-         defs: parseDefs(entry.senses)
+         defs: parseDefs(entry)
       });
    }
-
+   
    return {
       entries: entries,
+      count: content.length,
       isLastPage: content.length < 20
    }
 }
 
-export function getObjectsFromHTML(rawHTML) {
-   const root = parse(rawHTML);
-   const entries = [];
-   const countText = root.querySelector(".result_count")?.text;
-   const content = root.querySelectorAll("[class='concept_light clearfix']");
-   const isLastPage = !root.querySelector(".more");
-   // console.log(content);
-   for(const entry of content) {
-      entries.push({
-         furigana: parseFurigana(entry.querySelector(".furigana")),
-         chars: parseChars(entry.querySelector(".text")),
-         defs: parseDefs(entry.querySelector(".meanings-wrapper")),
-      });  
-   }
-   return {
-      entries: entries, 
-      countText: countText, 
-      isLastPage: isLastPage
-   };
-}
-
-function parseFurigana(nodes) {
-   let result = [];
-   for(const furi of nodes.getElementsByTagName("span")) {
-      result.push(furi.text);
-   }
-   // console.log("furigana", result);
+function parseFurigana(node) {
+   let result = node.japanese[0].reading;
    return result;
 }
 
 function parseChars(node) {
    // console.log("chars", node.text);
-   return decodeURIComponent(node.slug).trim();
+   return decodeURIComponent(node.japanese[0].word || node.japanese[0].reading).trim();
 }
 
-function parseDefs(defs) {
+function parseDefs(node) {
+   const defs = node.senses;
    let result = [];
 
    function getType(tag) {
@@ -64,59 +41,21 @@ function parseDefs(defs) {
    } 
 
    for(let d of defs) {
-      const tag = d.parts_of_speech;
       result.push({
-         type: getType(tag),
-         tag:  tag,
-         data: [d.english_definitions.join("; "), ...d.tags],
+         type: getType(d.parts_of_speech[0]),
+         tag:  d.parts_of_speech.join(", "),
+         data: [d.english_definitions.join("; "), ...d.tags, ...d.info],
          link: d.links[0]
       });
    }
+   if(node.japanese.length > 1) {
+      result.push({
+         type: Constants.OTHERS_DEF,
+         tag: "Other forms",
+         data: node.japanese.slice(1).map(form => (form.word ?? "") + "【" + form.reading + "】")
+      });
+   }
    return result;
-   // let tags = nodes.querySelectorAll(".meaning-tags");
-   // let defs = nodes.querySelectorAll(".meaning-wrapper");
- 
-   // const formatDef = (index) => {
-   //    let tag = tags[index].text;
-   //    let result = {
-   //       "type": null,
-   //       "tag" : tag,
-   //       "data" : []
-   //    }
-   //    if(tag[0] === "W") {
-   //       result.type = Constants.WIKIPEDIA_DEF;
-   //       result.data.push(defs[index].querySelector(".meaning-meaning").text);
-   //       const abstract = defs[index].querySelector(".meaning-abstract");
-   //       if(abstract) {
-   //          result.data.push([abstract.text, abstract.querySelector("a").attributes.href]);
-   //       }
-   //    }
-   //    else if(tag[0] === "O") {
-   //       result.type = Constants.OTHERS_DEF;
-   //       for(let form of defs[index].querySelectorAll(".meaning-meaning > span")) {
-   //          result.data.push(form.text);
-   //       }
-   //    }
-   //    else if(tag === "Notes") {
-   //       result.type = Constants.NOTES_DEF;
-   //       result.data.push(nodes.querySelector(".meaning-representation_notes").text);
-   //    }
-   //    else {
-   //       result.type = Constants.DEFAULT_DEF;
-   //       result.data.push(defs[index].querySelector(".meaning-meaning").text);
-   //       const suppInfo = defs[index].querySelector(".supplemental_info");
-   //       if(suppInfo)
-   //          result.data.push(suppInfo.text);
-   //    }
-   //    return result;
-   // }
-
-   // for(let i = 0; i < tags.length; ++i) {
-   //    result.push(formatDef(i));
-   // }
-
-   // // console.log(result);
-   // return result;
 }
 
 export function parseWikipediaDef(rawHTML) {

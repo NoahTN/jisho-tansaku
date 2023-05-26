@@ -10,7 +10,7 @@ export default function DictEntry(props) {
       let output = "";
       for(let def of props.defs) {
          if(def.type === Constants.WIKIPEDIA_DEF && def.link) {
-            output = <a href={ "https:" + def.link.url.split(":")[1]} onClick={ handleReadMoreClick }>{ def.link.text }</a>
+            output = <a href={ "https:" + def.link.url.split(":")[1]} target="_blank" rel="noreferrer">{ def.link.text }</a>
             break;
          }
       }
@@ -26,18 +26,22 @@ export default function DictEntry(props) {
 
    return (
       <div className="jf-entry">
-         <div className={"jf-info" + (props.chars.length > 5 ? " jf-info-long" : "")}>
-            <div className="jf-furigana">
-               { props.furigana }
-               {/* <span className={"kana"}></span> */}
-               {/* {props.furigana.map((furi, index) => {
-                  return <span key={ index } className={furi ? "kana" : ""}>{ furi }</span>;
-               })} */}
-            </div>
-            <div className="jf-chars">{ props.chars }</div>
-         </div>
+         <span className={"jf-info" + (props.chars.length > 5 ? " jf-info-long" : "")}>
+            <div className="jf-entry-head">
+               <div className="jf-furigana">
+                  {props.furigana === props.chars ? "" :
+                     (props.furigana ?? "").split("").map((furi, index) => {
+                        return <span key={ index } className={furi ? "kana" : ""}>{ furi }</span>;
+                     })
+                  }
+                  {/* <span className={"kana"}></span> */} 
+               </div>
+               <span className="jf-chars">{ props.chars }</span>
+            </div> 
+         </span>
          <div className={"jf-defs" + (props.chars.length > 5 ? " jf-defs-long" : "")}>
             {props.defs.map((def, index) => {
+             
                return (
                   <Fragment key={ index }>
                      <div className="jf-tag">{ def.tag }</div>
@@ -51,13 +55,9 @@ export default function DictEntry(props) {
                                     <span className="jf-def-abs">{ wikiDef }</span>
                                  </>
                               case Constants.OTHERS_DEF:
-                                 return <>
-                                    {def.data.map((form, formIndex) => {
-                                       return <span key={ formIndex }>{form + (formIndex < def.data.length-1 ? "、" : "")}</span>
-                                    })}
-                                 </>
+                                 return <span>{ def.data.join("、") }</span>
                               case Constants.NOTES_DEF:
-                                 return <span className="jf-def-notes">{def.data[0]}</span>
+                                 return <span className="jf-def-notes">{ def.data[0] }</span>
                               default:
                                  return <>
                                     <span className="jf-def-num">{ index+1 }. </span>

@@ -6,6 +6,11 @@ import DictEntry  from "./templates/dict-entry";
 import KanjiEntry from "./templates/kanji-entry";
 // TODO:  behaviour with regex (ex. wild cards)
 
+const bodyPadding = [
+   parseInt(window.getComputedStyle(document.body, null).getPropertyValue("padding-left").slice(0, -2)),
+   parseInt(window.getComputedStyle(document.body, null).getPropertyValue("padding-right").slice(0, -2))
+]
+
 function JFrame(props) {
     const jFrameRef = useRef();
     const searchbarRef = useRef();
@@ -13,22 +18,20 @@ function JFrame(props) {
     const isLastPage = useRef();
     const lastSearchedText = useRef();
     const obeserverRef = useRef(null);
-    const prevDocHeight = useRef(document.documentElement.clientHeight);
     const [displayLoading, setDisplayLoading] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [searchResults, setSearchResults] = useState([]);
-    const [resultCountText, setResultCountText] = useState("");
+    const [resultCount, setResultCount] = useState(null);
     const [bounds, setBounds] = useState({bottom: document.documentElement.clientHeight - props.height, right: document.documentElement.clientWidth - props.width});
 
    useEffect(() => {
-    
       chrome.runtime.sendMessage({type: "signal-ready"}, (response) => {
          if(response) {
             setSearchText(response);
             searchUsingText(response);
          }
       });
-
+   
       window.addEventListener("resize", onWindowResize);
       obeserverRef.current = new ResizeObserver(throttle(() => {
          if(jFrameRef.current.offsetWidth) {
@@ -89,7 +92,7 @@ function JFrame(props) {
             }
             else {
                setSearchResults(result.entries);
-               setResultCountText(result.countText ? result.countText : "");
+               setResultCount(result.count);
             }
             furthestPage.current = page;
             isLastPage.current = result.isLastPage;
@@ -100,12 +103,6 @@ function JFrame(props) {
    }
 
    function onWindowResize() {
-      if(document.documentElement.clientHeight !== prevDocHeight.current && jFrameRef.current.offsetHeight) {
-         chrome.storage.sync.get("y", (data) => {
-            jFrameRef.current.style.height = Math.min(document.documentElement.clientHeight, jFrameRef.current.offsetHeight+data.y)+"px";
-         });
-         prevDocHeight.current = document.documentElement.clientHeight;
-      }
       updateBounds();
    };
 
@@ -114,12 +111,16 @@ function JFrame(props) {
       searchUsingText(searchText);
    };
 
-   function handleDragStart(e) {
-      document
+   function handleDragStart(e, data) {
+      if(jFrameRef.current.offsetWidth+data.x >= document.documentElement.clientWidth-2) {
+         jFrameRef.current.style.width = document.documentElement.clientWidth-2-data.x +"px";
+      }
+      if(jFrameRef.current.offsetHeight+data.y >= document.documentElement.clientHeight-2) {
+         jFrameRef.current.style.height = document.documentElement.clientHeight-2-data.y + "px";
+      }
    }
 
    function handleDragStop(e, data) {
-      console.log([data.x, data.y]);
       chrome.storage.sync.set({x: data.x, y: data.y});
    }
 
@@ -128,11 +129,14 @@ function JFrame(props) {
          handle=".drag-handle" 
          bounds={{
             top: 0, 
-            left: 2, 
-            right: bounds.right-2, 
-            bottom: bounds.bottom
+            left: 2 - bodyPadding[0], 
+            right: bounds.right - 2 - bodyPadding[1], 
+            bottom: bounds.bottom - 2
          }}
-         defaultPosition={{x: props.defaultX+props.width <= document.documentElement.clientWidth ? props.defaultX : document.documentElement.clientWidth-props.width, y: props.defaultY}}
+         defaultPosition={{
+            x: props.defaultX+props.width <= document.documentElement.clientWidth-2 ? props.defaultX : document.documentElement.clientWidth-props.width, 
+            y: props.defaultY+props.height <= document.documentElement.clientHeight-2 ? props.defaultY : document.documentElement.clientHeight-props.height}}
+         onStart={ handleDragStart }
          onStop={ handleDragStop }
       >
          <div id="jf-content" ref={ jFrameRef } style={{width: props.width+"px", height: props.height+"px"}}>
@@ -155,9 +159,8 @@ function JFrame(props) {
                   </button>
                </div>
             </form>
-            {resultCountText.length > 0 &&
+            {resultCount > 0 &&
                <h4>
-  
                   <Credits query={ lastSearchedText.current }/>
                </h4>
             }
@@ -182,7 +185,7 @@ function JFrame(props) {
                 : null
             }
             </div>
-            {!resultCountText.length ? <Credits /> : null}
+            {!resultCount ? <Credits /> : null}
          </div>   
       </Draggable>
    );
@@ -191,7 +194,7 @@ function JFrame(props) {
 function Credits(props) {
    const link = props.query ? "https://jisho.org/search/"+props.query : "https://jisho.org";
    return <div className="credits">
-      <div>All data from <a href={ link } target="_blank" rel="noopener noreferrer">{ link }</a></div>
+      <div>All data from <a href={ link } target="_blank" rel="noreferrer">{ link }</a></div>
    </div>
 }
 

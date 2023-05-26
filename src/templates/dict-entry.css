@@ -28,7 +28,7 @@
 }
 
 .jf-furigana > .kana {
-   min-width: 2em;
+   min-width: 0;
    font-size: 1.2em;
 }
 
@@ -37,6 +37,7 @@
    margin-bottom: 0.5em;
    font-size: 2.7em;
    line-height: 1.1em;
+   word-break: keep-all;
 }
 
 .jf-defs {
@@ -49,7 +50,12 @@
    box-sizing: border-box;
 }
 
+.jf-def {
+   max-width: 75%;
+}
+
 .jf-defs-long {
+   width: 100%;
    padding-left: calc(25% + 0.2em);
 }
 
@@ -69,13 +75,13 @@
 .jf-def-abs {
    font-size: 1.1em;
    color: #666;
-   margin-left: 0.8em;
+   margin-left: 0.5em;
 }
 
 .jf-def-supp {
    font-size: 1.1em;
    color: #999;
-   margin-left: 0.8em;
+   margin-left: 0.5em;
 }
 
 .jf-def-notes {
