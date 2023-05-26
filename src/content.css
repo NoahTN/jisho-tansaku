@@ -50,12 +50,23 @@
    font-size: 1.4em;
    font-weight: bold;
    color: #222;
+   display: flex;
 }
 
 #jf-content > h4 > span {
    font-weight: normal;
    font-size: 0.9em;
    color: #666;
+   margin-left: 0.4em;
+   width: 30%;
+}
+
+#jf-content h4 .credits {
+   margin: 0 0.6em 0 0;
+   font-size: inherit;
+   font-weight: 400;
+   width: 100%;
+   text-align: right;
 }
 
 #jf-form {
@@ -117,7 +128,7 @@
 }
 
 #jf-results {
-   margin-top: .3em;
+   margin-top: 0.4em;
 }
 
 #jf-no-results {
@@ -143,11 +154,6 @@
 #jf-more-words > div {
    display: flex;
    justify-content: space-between;
-}
-
-#jf-more-words .credits {
-   margin: 0 1em 0 0;
-   font-size: inherit;
 }
 
 /* Loading Spinner CSS */

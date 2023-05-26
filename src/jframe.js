@@ -158,6 +158,7 @@ function JFrame(props) {
                <h4>
                   Words
                   <span>{ resultCountText }</span>
+                  <Credits query={ lastSearchedText.current }/>
                </h4>
             }
             <div id="jf-results">{ 
@@ -177,7 +178,6 @@ function JFrame(props) {
             <div id="jf-more-words">{
                (searchResults.length && !isLastPage.current) ? <div>
                   <a onClick={() => searchUsingText(lastSearchedText.current)}>More Words {">"}</a>
-                  <Credits/>
                </div>
                 : null
             }
@@ -188,9 +188,10 @@ function JFrame(props) {
    );
 }
 
-function Credits() {
+function Credits(props) {
+   const link = props.query ? "https://jisho.org/search/"+props.query : "https://jisho.org";
    return <div className="credits">
-      <div>All data from <a href="https://jisho.org/" target="_blankl" rel="noopener noreferrer">https://jisho.org/</a></div>
+      <div>All data from <a href={ link } target="_blank" rel="noopener noreferrer">{ link }</a></div>
    </div>
 }
 
