@@ -1,6 +1,23 @@
 import { parse } from "node-html-parser";
 import Constants from "./constants";
 
+export function getObjectsFromJSON(json) {
+   const content = json.data;
+   const entries = [];
+   for(const entry of content) {
+      entries.push({
+         furigana: entry.japanese[0].reading,
+         chars: parseChars(entry),
+         defs: parseDefs(entry.senses)
+      });
+   }
+
+   return {
+      entries: entries,
+      isLastPage: content.length < 20
+   }
+}
+
 export function getObjectsFromHTML(rawHTML) {
    const root = parse(rawHTML);
    const entries = [];
@@ -12,7 +29,7 @@ export function getObjectsFromHTML(rawHTML) {
       entries.push({
          furigana: parseFurigana(entry.querySelector(".furigana")),
          chars: parseChars(entry.querySelector(".text")),
-         defs: parseDefs(entry.querySelector(".meanings-wrapper"))
+         defs: parseDefs(entry.querySelector(".meanings-wrapper")),
       });  
    }
    return {
@@ -33,55 +50,73 @@ function parseFurigana(nodes) {
 
 function parseChars(node) {
    // console.log("chars", node.text);
-   return node.text.trim();
+   return decodeURIComponent(node.slug).trim();
 }
 
-function parseDefs(nodes) {
+function parseDefs(defs) {
    let result = [];
-   let tags = nodes.querySelectorAll(".meaning-tags");
-   let defs = nodes.querySelectorAll(".meaning-wrapper");
- 
-   const formatDef = (index) => {
-      let tag = tags[index].text;
-      let result = {
-         "type": null,
-         "tag" : tag,
-         "data" : []
-      }
-      if(tag[0] === "W") {
-         result.type = Constants.WIKIPEDIA_DEF;
-         result.data.push(defs[index].querySelector(".meaning-meaning").text);
-         const abstract = defs[index].querySelector(".meaning-abstract");
-         if(abstract) {
-            result.data.push([abstract.text, abstract.querySelector("a").attributes.href]);
-         }
-      }
-      else if(tag[0] === "O") {
-         result.type = Constants.OTHERS_DEF;
-         for(let form of defs[index].querySelectorAll(".meaning-meaning > span")) {
-            result.data.push(form.text);
-         }
-      }
-      else if(tag === "Notes") {
-         result.type = Constants.NOTES_DEF;
-         result.data.push(nodes.querySelector(".meaning-representation_notes").text);
-      }
-      else {
-         result.type = Constants.DEFAULT_DEF;
-         result.data.push(defs[index].querySelector(".meaning-meaning").text);
-         const suppInfo = defs[index].querySelector(".supplemental_info");
-         if(suppInfo)
-            result.data.push(suppInfo.text);
-      }
-      return result;
-   }
 
-   for(let i = 0; i < tags.length; ++i) {
-      result.push(formatDef(i));
-   }
+   function getType(tag) {
+      if(tag[0][0] === "W") {
+         return Constants.WIKIPEDIA_DEF;
+      }
+      return Constants.DEFAULT_DEF;
+   } 
 
-   // console.log(result);
+   for(let d of defs) {
+      const tag = d.parts_of_speech;
+      result.push({
+         type: getType(tag),
+         tag:  tag,
+         data: [d.english_definitions.join("; "), ...d.tags],
+         link: d.links[0]
+      });
+   }
    return result;
+   // let tags = nodes.querySelectorAll(".meaning-tags");
+   // let defs = nodes.querySelectorAll(".meaning-wrapper");
+ 
+   // const formatDef = (index) => {
+   //    let tag = tags[index].text;
+   //    let result = {
+   //       "type": null,
+   //       "tag" : tag,
+   //       "data" : []
+   //    }
+   //    if(tag[0] === "W") {
+   //       result.type = Constants.WIKIPEDIA_DEF;
+   //       result.data.push(defs[index].querySelector(".meaning-meaning").text);
+   //       const abstract = defs[index].querySelector(".meaning-abstract");
+   //       if(abstract) {
+   //          result.data.push([abstract.text, abstract.querySelector("a").attributes.href]);
+   //       }
+   //    }
+   //    else if(tag[0] === "O") {
+   //       result.type = Constants.OTHERS_DEF;
+   //       for(let form of defs[index].querySelectorAll(".meaning-meaning > span")) {
+   //          result.data.push(form.text);
+   //       }
+   //    }
+   //    else if(tag === "Notes") {
+   //       result.type = Constants.NOTES_DEF;
+   //       result.data.push(nodes.querySelector(".meaning-representation_notes").text);
+   //    }
+   //    else {
+   //       result.type = Constants.DEFAULT_DEF;
+   //       result.data.push(defs[index].querySelector(".meaning-meaning").text);
+   //       const suppInfo = defs[index].querySelector(".supplemental_info");
+   //       if(suppInfo)
+   //          result.data.push(suppInfo.text);
+   //    }
+   //    return result;
+   // }
+
+   // for(let i = 0; i < tags.length; ++i) {
+   //    result.push(formatDef(i));
+   // }
+
+   // // console.log(result);
+   // return result;
 }
 
 export function parseWikipediaDef(rawHTML) {

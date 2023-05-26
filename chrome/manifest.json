@@ -26,6 +26,7 @@
     "128": "/images/logo128.png"
   },
   "host_permissions": [
-    "https://jisho.org/*"
+    "https://jisho.org/api/*",
+    "https://en.wikipedia.org/*"
   ]
 }

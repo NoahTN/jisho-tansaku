@@ -9,11 +9,8 @@ export default function DictEntry(props) {
    useEffect(() => {
       let output = "";
       for(let def of props.defs) {
-         if(def.type === Constants.WIKIPEDIA_DEF && def.data.length > 1) {
-            output = <>
-               { def.data[1][0].split("Read more")[0] }
-               <a href={ def.data[1][1] } onClick={ handleReadMoreClick }>Read more</a>
-            </>
+         if(def.type === Constants.WIKIPEDIA_DEF && def.link) {
+            output = <a href={ "https:" + def.link.url.split(":")[1]} onClick={ handleReadMoreClick }>{ def.link.text }</a>
             break;
          }
       }
@@ -31,9 +28,11 @@ export default function DictEntry(props) {
       <div className="jf-entry">
          <div className={"jf-info" + (props.chars.length > 5 ? " jf-info-long" : "")}>
             <div className="jf-furigana">
-               {props.furigana.map((furi, index) => {
+               { props.furigana }
+               {/* <span className={"kana"}></span> */}
+               {/* {props.furigana.map((furi, index) => {
                   return <span key={ index } className={furi ? "kana" : ""}>{ furi }</span>;
-               })}
+               })} */}
             </div>
             <div className="jf-chars">{ props.chars }</div>
          </div>
@@ -47,6 +46,7 @@ export default function DictEntry(props) {
                            switch(def.type) {
                               case Constants.WIKIPEDIA_DEF:
                                  return <>
+                                    <span className="jf-def-num">{ index+1 }. </span>
                                     <span className="jf-def-text">{ def.data[0] }</span>
                                     <span className="jf-def-abs">{ wikiDef }</span>
                                  </>

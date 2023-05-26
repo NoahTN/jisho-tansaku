@@ -46,14 +46,15 @@ chrome.action.onClicked.addListener((tab) => {
       const requestMap = {
          "search-query": async () => {
             tabAndTextMap[sender.tab.id] = request.data;
-            const searchQuery = await fetch("https://jisho.org/search/" + encodeURIComponent(tabAndTextMap[sender.tab.id]) + (request.page ? ("%20%23words?page="+request.page) : ""));
-            const searchQueryText = await searchQuery.text();
-            sendResponse(searchQueryText);
+            const searchQuery = await fetch("https://jisho.org/api/v1/search/words?keyword=" + encodeURIComponent(tabAndTextMap[sender.tab.id]) + (request.page ? ("&page="+request.page) : ""));
+            const searchQueryJSON = await searchQuery.json();
+            console.log(searchQueryJSON);
+            sendResponse(searchQueryJSON);
          },
          "read-more": async () => {
             const readMoreQuery = await fetch(request.url);
-            const readMoreQueryText = await readMoreQuery.text();
-            sendResponse(readMoreQueryText);
+            const readMoreQueryJSON = await readMoreQuery.json();
+            sendResponse(readMoreQueryJSON);
          },
          "signal-ready": () => {
             sendResponse(tabAndTextMap[sender.tab.id] || "");

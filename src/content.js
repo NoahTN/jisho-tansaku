@@ -8,7 +8,6 @@ if(target === null) {
    require("./content.css");
 
    chrome.storage.sync.get({width: 650, height: 500, x: document.documentElement.clientWidth/2 - 325, y: document.documentElement.clientHeight/2 - 250}, (data) => {
-      console.log(data);
       const jframe = <JFrame width={data.width} height={data.height} defaultX={data.x} defaultY={data.y}/>;
       const container = document.createElement("div");
       container.id = "jframe";

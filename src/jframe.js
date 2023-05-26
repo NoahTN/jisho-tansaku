@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useReducer } from "react";
-import { getObjectsFromHTML } from "./tools/parser";
+import { getObjectsFromJSON } from "./tools/parser";
 import Draggable from "react-draggable";
 import { throttle } from "./tools/common-functions";
 import DictEntry  from "./templates/dict-entry";
@@ -82,7 +82,8 @@ function JFrame(props) {
          const page = repeatedSearch ? (furthestPage.current+1) : 0;
          //console.log([text, lastSearchedText.current, page]);
          chrome.runtime.sendMessage({type: "search-query", data: text, page: (page+1)}, (response) => {
-            const result = getObjectsFromHTML(response);
+            const result = getObjectsFromJSON(response);
+            console.log(result);
             if(page > 0) {
                setSearchResults(prev => [...prev].concat(result.entries));
             }
@@ -156,8 +157,7 @@ function JFrame(props) {
             </form>
             {resultCountText.length > 0 &&
                <h4>
-                  Words
-                  <span>{ resultCountText }</span>
+  
                   <Credits query={ lastSearchedText.current }/>
                </h4>
             }
