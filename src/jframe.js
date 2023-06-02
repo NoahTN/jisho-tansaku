@@ -3,8 +3,12 @@ import { getObjectsFromJSON } from "./tools/parser";
 import Draggable from "react-draggable";
 import { throttle } from "./tools/common-functions";
 import DictEntry  from "./templates/dict-entry";
-import KanjiEntry from "./templates/kanji-entry";
-// TODO:  behaviour with regex (ex. wild cards)
+// import KanjiEntry from "./templates/kanji-entry";
+import { library } from "@fortawesome/fontawesome-svg-core"
+import { faChevronLeft, faChevronRight, faMagnifyingGlass, faMoon, faSun } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+library.add(faChevronLeft, faChevronRight, faMagnifyingGlass, faMoon, faSun);
 
 const bodyPadding = [
    parseInt(window.getComputedStyle(document.body, null).getPropertyValue("padding-left").slice(0, -2)),
@@ -18,6 +22,7 @@ function JFrame(props) {
     const isLastPage = useRef();
     const lastSearchedText = useRef();
     const obeserverRef = useRef(null);
+    const [darkMode, setDarkMode] = useState(false);
     const [displayLoading, setDisplayLoading] = useState(false);
     const [searchText, setSearchText] = useState("");
     const [searchResults, setSearchResults] = useState([]);
@@ -30,6 +35,12 @@ function JFrame(props) {
             setSearchText(response);
             searchUsingText(response);
          }
+      });
+
+      chrome.runtime.onMessage.addListener(searchContext)
+
+      chrome.storage.sync.get(["darkMode"]).then(res => {
+         setDarkMode(res.darkMode ?? false);
       });
    
       window.addEventListener("resize", onWindowResize);
@@ -85,19 +96,24 @@ function JFrame(props) {
          const page = repeatedSearch ? (furthestPage.current+1) : 0;
          //console.log([text, lastSearchedText.current, page]);
          chrome.runtime.sendMessage({type: "search-query", data: text, page: (page+1)}, (response) => {
-            const result = getObjectsFromJSON(response);
-            console.log(result);
-            if(page > 0) {
-               setSearchResults(prev => [...prev].concat(result.entries));
+            if(typeof response === "object") {
+               const result = getObjectsFromJSON(response);
+          
+               if(page > 0) {
+                  setSearchResults(prev => [...prev].concat(result.entries));
+               }
+               else {
+                  setSearchResults(result.entries);
+                  setResultCount(result.count);
+               }
+               furthestPage.current = page;
+               isLastPage.current = result.isLastPage;
+               lastSearchedText.current = text;
+               setDisplayLoading(false);
             }
             else {
-               setSearchResults(result.entries);
-               setResultCount(result.count);
+               console.log(response);
             }
-            furthestPage.current = page;
-            isLastPage.current = result.isLastPage;
-            lastSearchedText.current = text;
-            setDisplayLoading(false);
          });
       }
    }
@@ -123,6 +139,12 @@ function JFrame(props) {
    function handleDragStop(e, data) {
       chrome.storage.sync.set({x: data.x, y: data.y});
    }
+   
+   function handleDisplayModeChange() {
+      const temp = !darkMode;
+      setDarkMode(temp);
+      chrome.storage.sync.set({"darkMode": temp});
+   }
 
    return (
       <Draggable 
@@ -139,10 +161,13 @@ function JFrame(props) {
          onStart={ handleDragStart }
          onStop={ handleDragStop }
       >
-         <div id="jf-content" ref={ jFrameRef } style={{width: props.width+"px", height: props.height+"px"}}>
+         <div id="jf-content" className={ darkMode ? "jf-content-dark" : ""} ref={ jFrameRef } style={{width: props.width+"px", height: props.height+"px"}}>
             <div className="drag-handle"></div>
-            <form id="jf-form" onSubmit={ handleSubmit }>
+            <form id="jf-form" className={ darkMode ? "jf-form-dark" : ""} onSubmit={ handleSubmit }>
                <div id="jf-form-inner">
+                  {/* <span id="jf-prev-button" className="jf-nav-button"><FontAwesomeIcon icon={["fas", "chevron-left"]} /></span>
+                  <span id="jf-next-button" className="jf-nav-button"><FontAwesomeIcon icon={["fas", "chevron-right"]} /></span> */}
+                  <span id="jf-display-mode" onClick={ handleDisplayModeChange }><FontAwesomeIcon icon={["fas", darkMode ? "moon": "sun"]} /></span>
                   <input id="jf-searchbar" 
                      type="text" 
                      value={searchText} 
@@ -155,46 +180,46 @@ function JFrame(props) {
                   </input>
                   {displayLoading && <div className="lds-ring"><div></div><div></div><div></div><div></div></div>}
                   <button id="jf-submit-btn" type="submit">
-                     <div>🔍︎</div>
+                     <FontAwesomeIcon icon={["fas", "magnifying-glass"]} />
                   </button>
                </div>
             </form>
-            {resultCount > 0 &&
-               <h4>
-                  <Credits query={ lastSearchedText.current }/>
-               </h4>
-            }
-            <div id="jf-results">{ 
-               lastSearchedText.current && (searchResults.length ? 
-                  searchResults.map((entry, index) =>
-                     <DictEntry
-                        furigana={ entry.furigana }
-                        chars={ entry.chars }
-                        defs={ entry.defs }
-                        key={ index }
-                     />
-                  ) : (!displayLoading && <div id="jf-no-results">
-                     Sorry, couldn't find anything matching { lastSearchedText.current }.
-                  </div>)
-               )}
-            </div>
-            <div id="jf-more-words">{
-               (searchResults.length && !isLastPage.current) ? <div>
-                  <a onClick={() => searchUsingText(lastSearchedText.current)}>More Words {">"}</a>
+            <div id="jf-main-content">
+               {resultCount > 0 &&
+                  <h4>
+                     <Credits query={ lastSearchedText.current }/>
+                  </h4>
+               }
+               <div id="jf-results">{ 
+                  lastSearchedText.current && (searchResults.length ? 
+                     searchResults.map((entry, index) =>
+                        <DictEntry
+                           data={ entry }
+                           key={ index }
+                        />
+                     ) : (!displayLoading && <div id="jf-no-results">
+                        Sorry, couldn't find anything matching { lastSearchedText.current }.
+                     </div>)
+                  )}
                </div>
-                : null
-            }
+               <div id="jf-more-words">{
+                  (searchResults.length && !isLastPage.current) ? <div>
+                     <a onClick={() => searchUsingText(lastSearchedText.current)}>More Words {">"}</a>
+                  </div>
+                  : null
+               }
+               </div>
+               {!resultCount ? <Credits /> : null}
             </div>
-            {!resultCount ? <Credits /> : null}
          </div>   
       </Draggable>
    );
 }
 
 function Credits(props) {
-   const link = props.query ? "https://jisho.org/search/"+props.query : "https://jisho.org";
    return <div className="credits">
-      <div>All data from <a href={ link } target="_blank" rel="noreferrer">{ link }</a></div>
+      {props.query ? <a href={"https://jisho.org/search/"+props.query} target="_blank">Go to Jisho Page</a> :
+      <div>Data from <a href="https://jisho.org" target="_blank">jisho.org</a></div>}
    </div>
 }
 

@@ -45,11 +45,17 @@ chrome.action.onClicked.addListener((tab) => {
    (async () => {
       const requestMap = {
          "search-query": async () => {
-            tabAndTextMap[sender.tab.id] = request.data;
-            const searchQuery = await fetch("https://jisho.org/api/v1/search/words?keyword=" + encodeURIComponent(tabAndTextMap[sender.tab.id]) + (request.page ? ("&page="+request.page) : ""));
-            const searchQueryJSON = await searchQuery.json();
-            console.log(searchQueryJSON);
-            sendResponse(searchQueryJSON);
+            try {
+               tabAndTextMap[sender.tab.id] = request.data;
+               const searchQuery = await fetch("https://jisho.org/api/v1/search/words?keyword=" + encodeURIComponent(tabAndTextMap[sender.tab.id]) + (request.page ? ("&page="+request.page) : ""));
+               const searchQueryJSON = await searchQuery.json();
+               console.log(searchQueryJSON);
+               sendResponse(searchQueryJSON);
+            }
+            catch(error) {
+               sendResponse("Error in querying data for " + tabAndTextMap[sender.tab.id])
+            }
+            
          },
          "read-more": async () => {
             const readMoreQuery = await fetch(request.url);

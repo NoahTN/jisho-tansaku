@@ -8,7 +8,10 @@ export function getObjectsFromJSON(json) {
       entries.push({
          furigana: parseFurigana(entry),
          chars: parseChars(entry),
-         defs: parseDefs(entry)
+         defs: parseDefs(entry),
+         isCommon: entry.is_common ?? false,
+         jlptLevel: entry.jlpt.length ? entry.jlpt[0].replace("-", " ") : null,
+         wanikaniLevel: entry.tags.length ? ("wanikani level " + entry.tags[0].split("wanikani")[1]) : null
       });
    }
    
@@ -34,7 +37,7 @@ function parseDefs(node) {
    let result = [];
 
    function getType(tag) {
-      if(tag[0][0] === "W") {
+      if(tag?.[0]?.[0] === "W") {
          return Constants.WIKIPEDIA_DEF;
       }
       return Constants.DEFAULT_DEF;

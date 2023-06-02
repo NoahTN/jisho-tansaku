@@ -13,6 +13,10 @@
    cursor: pointer;
 }
 
+.jf-content-dark a:hover {
+   color: #ddd !important;
+}
+
 .drag-handle {
    background-color: #69D838;
    height: 1.2em;
@@ -20,6 +24,10 @@
    top: 0;
    cursor: move;
    z-index: 2;
+}
+
+.drag-handle:hover {
+   opacity : 70%;
 }
 
 #jf-content {
@@ -32,7 +40,6 @@
    font-style: normal !important;
    font-weight: normal !important;
    font-size: 13px;
-   line-height: 1.5em;
    margin: 0;
    padding: 0;
    resize: both;
@@ -42,7 +49,13 @@
    min-height: 100px;
 }
 
-#jf-content > h4 {
+.jf-content-dark {
+   color: #eee !important;
+   background: #2a2a2a !important;
+   color-scheme: dark;
+}
+
+#jf-content  h4 {
    padding-left: 0.6em;
    margin-bottom: 0.25em;
    margin-top: 0.2em;
@@ -70,8 +83,7 @@
 }
 
 #jf-form {
-   background-color: #ddd;
-   border-radius: 5px;
+   background: #ddd;
    padding: 0.3em;
    width: 100%;
    box-sizing: border-box;
@@ -81,6 +93,37 @@
    margin: 0;
 }
 
+#jf-display-mode {
+   background: #eee;
+   color: #555;
+   font-size: 2em;
+   text-align: center;
+   line-height: normal;
+   padding: 0.5em 0.6em;
+}
+
+#jf-display-mode:hover {
+   opacity: 60%;
+   cursor: pointer;
+}
+
+.jf-nav-button {
+   background: #eee;
+   color: #555;
+   font-size: 2em;
+   width: 1em;
+}
+
+#jf-prev-button {
+   text-align: left;
+   padding: 0.5em 0.3em 0.5em 0.5em;
+}
+
+#jf-next-button {
+   text-align: right;
+   padding: 0.5em 0.5em 0.5em 0.3em;
+}
+
 #jf-form-inner {
    width: 100%;
    border-radius: 2px;
@@ -88,6 +131,31 @@
    display: flex;
    align-items: center;
    box-sizing: border-box;
+}
+
+
+.jf-form-dark {
+   background: #404040 !important;
+   color: #eee !important;
+}
+
+.jf-form-dark #jf-form-inner {
+   background: #404040 !important;
+   color: #eee !important;
+}
+
+.jf-form-dark input {
+   color: #eee !important;
+}
+
+.jf-form-dark #jf-submit-btn {
+   background: #6a6a6a !important;
+   color: #ddd !important;
+}
+
+.jf-form-dark #jf-display-mode {
+   background: #6a6a6a !important;
+   color: #ddd !important;
 }
 
 #jf-searchbar {
@@ -107,18 +175,23 @@
    text-transform: none;
 }
 
-
 #jf-submit-btn {
    margin: 0;
    box-sizing:border-box;
    height: 100%;
-   padding: 0.7em 0.6em 0.4em 0.8em;
+   padding: 0.5em 0.7em;
    border: none;
    background: #eee;
    font-weight: normal;
    color: #555;
    border-radius: 0 1px 1px 0;
    cursor: pointer;
+   font-size: 2em;
+   transition: none;
+}
+
+#jf-submit-btn:hover {
+   opacity : 60%;
 }
 
 #jf-submit-btn > div {
@@ -126,6 +199,11 @@
    line-height: 1em;
    font-family: Helvetica, Arial, sans-serif;
 }
+
+#jf-main-content {
+ 
+}
+
 
 #jf-results {
    margin-top: 0.4em;
@@ -150,6 +228,8 @@
    font-size: 1.25em;
    text-align: center;
 }
+
+
 
 #jf-more-words > div {
    display: flex;

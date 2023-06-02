@@ -8,14 +8,14 @@ export default function DictEntry(props) {
 
    useEffect(() => {
       let output = "";
-      for(let def of props.defs) {
+      for(let def of props.data.defs) {
          if(def.type === Constants.WIKIPEDIA_DEF && def.link) {
             output = <a href={ "https:" + def.link.url.split(":")[1]} target="_blank" rel="noreferrer">{ def.link.text }</a>
             break;
          }
       }
       setWikiDef(output);
-   }, [props.defs]);
+   }, [props.data.defs]);
 
    function handleReadMoreClick(event) {
       event.preventDefault();
@@ -26,21 +26,29 @@ export default function DictEntry(props) {
 
    return (
       <div className="jf-entry">
-         <span className={"jf-info" + (props.chars.length > 5 ? " jf-info-long" : "")}>
-            <div className="jf-entry-head">
-               <div className="jf-furigana">
-                  {props.furigana === props.chars ? "" :
-                     (props.furigana ?? "").split("").map((furi, index) => {
-                        return <span key={ index } className={furi ? "kana" : ""}>{ furi }</span>;
-                     })
-                  }
-                  {/* <span className={"kana"}></span> */} 
-               </div>
-               <span className="jf-chars">{ props.chars }</span>
-            </div> 
+         <span className={"jf-info" + (props.data.chars.length > 5 ? " jf-info-long" : "")}>
+            <span className="jf-info-head-container">
+            <span className="jf-info-head">
+                  <span className="jf-furigana">
+                     {props.data.furigana === props.data.chars ? "" :
+                        (props.data.furigana ?? "").split("").map((furi, index) => {
+                           return <span key={ index } className={furi ? "kana" : ""}>{ furi }</span>;
+                        })
+                     }
+                     {/* <span className={"kana"}></span> */} 
+                  </span>
+                  <span className="jf-chars">{ props.data.chars }</span>
+            </span>
+            </span>
+            
+            <div className="jf-other-info">
+               {props.data.isCommon && <span className="jf-is-common">common word</span>}
+               {props.data.jlptLevel && <span className="jf-level-tag">{ props.data.jlptLevel }</span>}
+               {props.data.wanikaniLevel && <a target="_blank" href="http://wanikani.com/"><span className="jf-level-tag">{ props.data.wanikaniLevel }</span></a>}
+            </div>
          </span>
-         <div className={"jf-defs" + (props.chars.length > 5 ? " jf-defs-long" : "")}>
-            {props.defs.map((def, index) => {
+         <div className={"jf-defs" + (props.data.chars.length > 5 ? " jf-defs-long" : "")}>
+            {props.data.defs.map((def, index) => {
              
                return (
                   <Fragment key={ index }>

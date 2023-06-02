@@ -32,12 +32,60 @@
    font-size: 1.2em;
 }
 
+.jf-info-head-container {
+   display: flex;
+}
+
+.jf-info-head {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 0.5em;
+}
+
 .jf-chars {
    box-sizing: border-box;
    margin-bottom: 0.5em;
    font-size: 2.7em;
    line-height: 1.1em;
    word-break: keep-all;
+}
+
+.jf-other-info {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   text-align: center;
+   margin-top: 1em;
+   margin-bottom: 1em;
+   gap: 0.5em;
+   color: #fff;
+}
+
+.jf-content-dark .jf-other-info {
+   color: #000;
+}
+
+#jframe .jf-other-info a {
+   color: inherit;
+}
+
+#jframe .jf-other-info a span {
+   padding: 0.1em 0.5em;
+}
+
+.jf-other-info span {
+   padding: 0.1em 0.5em;
+}
+
+.jf-is-common {
+   background: #8abc83;
+   border-radius: 5px;
+}
+
+.jf-level-tag {
+   background: #909dc0;
+   border-radius: 5px;
 }
 
 .jf-defs {
