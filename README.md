@@ -1,26 +1,26 @@
 #  ![Jisho Tansaku Logo](chrome/images/logo48.png)&nbsp;&nbsp;Jisho Tansaku
 
-Unofficial Chrome extension for conveniently looking up and displaying words using [Jisho.org](https://jisho.org/).
+Unofficial Chrome extension for conveniently looking up and displaying words from [Jisho.org](https://jisho.org/).
 
 ## Features
 
-- Search by clicking on popup and typing into searchbar
+- Search the [Jisho API](https://jisho.org/api/v1/search/words?keyword=cookie) by clicking on popup and typing into searchbar
 - Search via context-menu on highlighted text
-- Resizable and moveable interface
+- A resizable and moveable interface
 
 ## Usage
 - **Clicking Icon (Recommended to pin to toolbar)**
+
 ![click example](chrome/images/example-clicking.png)
 
 - **Context Menu**
+
 ![context menu example](chrome/images/example-context.png)
-
-## Disclaimer
-
-The core functionality of this extension is all depenent on the abiltiy to scrape the HTML of Jisho.org. Thus, the extension may suddenly cease to work should the HTML undergo major changes. 
 
 ## Support
 Let me know of any bugs you encounter or suggestions for improvement by opening an issue on the Github repo, thanks!
+
+Note that this extension in its current state is dependent on data provided by the Jisho API, and thus the availability of certain features (Ex: sentence searching) is largely limited to what is provided by it.
 
 ## Installation
 
