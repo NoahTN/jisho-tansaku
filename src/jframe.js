@@ -167,7 +167,7 @@ function JFrame(props) {
                <div id="jf-form-inner">
                   {/* <span id="jf-prev-button" className="jf-nav-button"><FontAwesomeIcon icon={["fas", "chevron-left"]} /></span>
                   <span id="jf-next-button" className="jf-nav-button"><FontAwesomeIcon icon={["fas", "chevron-right"]} /></span> */}
-                  <span id="jf-display-mode" onClick={ handleDisplayModeChange }><FontAwesomeIcon icon={["fas", darkMode ? "moon": "sun"]} /></span>
+                  <button id="jf-display-mode" onClick={ handleDisplayModeChange } type="button"><FontAwesomeIcon icon={["fas", darkMode ? "moon": "sun"]} /></button>
                   <input id="jf-searchbar" 
                      type="text" 
                      value={searchText} 

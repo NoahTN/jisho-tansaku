@@ -6,6 +6,7 @@
 
 #jframe a {
    color: #4A80B5;
+   font-family: Helvetica, Arial, sans-serif !important;
 }
 
 #jframe a:hover {
@@ -91,6 +92,8 @@
    top: 1.2em;
    z-index: 99999;
    margin: 0;
+   border-bottom-left-radius: 5px;
+   border-bottom-right-radius: 5px;
 }
 
 #jf-display-mode {
@@ -98,8 +101,6 @@
    color: #555;
    font-size: 2em;
    text-align: center;
-   line-height: normal;
-   padding: 0.5em 0.6em;
 }
 
 #jf-display-mode:hover {
@@ -133,9 +134,19 @@
    box-sizing: border-box;
 }
 
+#jf-form-inner button {
+   width: 2.4em;
+   height: 2.2em;
+   border: none;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   transition: none;
+}
+
 
 .jf-form-dark {
-   background: #404040 !important;
+   background: #6a6a6a !important;
    color: #eee !important;
 }
 
@@ -154,7 +165,7 @@
 }
 
 .jf-form-dark #jf-display-mode {
-   background: #6a6a6a !important;
+   background: #7a7a7a !important;
    color: #ddd !important;
 }
 
@@ -179,7 +190,6 @@
    margin: 0;
    box-sizing:border-box;
    height: 100%;
-   padding: 0.5em 0.7em;
    border: none;
    background: #eee;
    font-weight: normal;
