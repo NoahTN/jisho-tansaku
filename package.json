@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "webpack --config=webpack.config.js",
+    "prod": "webpack --config=webpack.prod.config.js",
     "dev": "cross-env NODE_ENV=development webpack --config=webpack.config --watch",
     "test": "webpack --config=webpack.test.config.js && npx playwright test tests/main-tests",
     "test-kanji": "webpack --config=webpack.test.config.js && npx playwright test tests/kanji-tests.spec.js"
@@ -30,7 +31,9 @@
     "css-loader": "^6.7.4",
     "file-loader": "^6.2.0",
     "style-loader": "^3.3.3",
+    "terser-webpack-plugin": "^5.3.9",
     "webpack": "^5.84.0",
-    "webpack-cli": "^4.10.0"
+    "webpack-cli": "^4.10.0",
+    "zip-webpack-plugin": "^4.0.1"
   }
 }
