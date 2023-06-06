@@ -1,6 +1,6 @@
 #  ![Jisho Tansaku Logo](chrome/images/logo48.png)&nbsp;&nbsp;Jisho Tansaku
 
-Unofficial Chrome extension for conveniently looking up and displaying words from [Jisho.org](https://jisho.org/).
+Unofficial Chrome extension for conveniently searching through Japanese dictionary site [Jisho.org](https://jisho.org/), right on the page.
 
 ## Features
 

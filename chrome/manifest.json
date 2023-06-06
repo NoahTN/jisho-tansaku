@@ -4,6 +4,7 @@
   "background": {
     "service_worker": "background.js"
   },
+  "description": "Unofficial Chrome extension for conveniently searching through Japanese dictionary site Jisho.org, right on the page.",
   "permissions": [
     "contextMenus",
     "storage",
