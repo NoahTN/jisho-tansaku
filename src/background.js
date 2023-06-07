@@ -1,11 +1,25 @@
 const tabAndTextMap = {};
 
+
+function onValidDomain(url) {
+   const invalidDomains = new Set(["edge", "chrome", "chrome.google.com"]);
+   return invalidDomains.has(url.split("://")[0]) || invalidDomains.has(url.split("/")[2]);
+}
+
 chrome.runtime.onInstalled.addListener(() => {
    chrome.contextMenus.create({
       "id": "my-menu",
       "title": "Search Jisho",
       "contexts": ["selection"]
    });
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+   const invalidDomains = new Set(["edge", "chrome", "chrome.google.com"]);
+   const url = tab.url || tab.pendingUrl;
+   if(invalidDomains.has(url.split("://")[0]) || invalidDomains.has(url.split("/")[2])) {
+      chrome.action.disable(tabId);
+   }
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
@@ -31,14 +45,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 chrome.action.onClicked.addListener((tab) => {
-   const invalidDomains = new Set(["edge", "chrome"]);
-   if(!invalidDomains.has(tab.url.split("://")[0])) {
-      tabAndTextMap[tab.id] = "";
-      chrome.scripting.executeScript({
-        target: {tabId: tab.id},
-        files: ["content.js"]
-      });
-   }
+   tabAndTextMap[tab.id] = "";
+   chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      files: ["content.js"]
+   });
  });
 
  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
