@@ -1,4 +1,4 @@
-#  ![Jisho Tansaku Logo](chrome/images/logo48.png)&nbsp;&nbsp;Jisho Tansaku
+#  ![Jisho Tansaku Logo](chrome/images/logo48.png)&nbsp;&nbsp;[Jisho Tansaku](https://chrome.google.com/webstore/detail/jisho-tansaku/kabienpjngpcblcfhgdmofbefajddkhb)
 
 Unofficial Chrome extension for conveniently searching through Japanese dictionary site [Jisho.org](https://jisho.org/), right on the page.
 
