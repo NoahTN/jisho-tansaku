@@ -44,6 +44,7 @@
 }
 
 .jf-chars {
+   color: #fff !important;
    box-sizing: border-box;
    margin-bottom: 0.5em;
    font-size: 2.7em;
@@ -59,11 +60,11 @@
    margin-top: 1em;
    margin-bottom: 1em;
    gap: 0.5em;
-   color: #fff;
+   color: #fff !important;
 }
 
 .jf-content-dark .jf-other-info {
-   color: #000;
+   color: #000 !important;
 }
 
 #jframe .jf-other-info a {
@@ -122,13 +123,13 @@
 
 .jf-def-abs {
    font-size: 1.1em;
-   color: #666;
+   color: #666 !important;
    margin-left: 0.5em;
 }
 
 .jf-def-supp {
    font-size: 1.1em;
-   color: #999;
+   color: #999 !important;
    margin-left: 0.5em;
 }
 
@@ -137,7 +138,7 @@
 }
 
 .jf-tag {
-   color: #888;
+   color: #888 !important;
    font-size: 1em;
    margin-top: 0.65em;
    font-weight: bold;
